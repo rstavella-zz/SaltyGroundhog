@@ -1,0 +1,25 @@
+49 pts
+
+Ok team,
+
+- Use cases seem to have a nice description. However, the part "search/view"
+  is really important and needs more details than what you provided.  -1pt
+
+
+-- True Course
+
+- Project plan looks ok.
+
+- User requirements look ok.
+
+- Use case diagram seems ok.
+
+- Questions for client were answered in class, but I made some notes in your
+  paper anyway.
+
+- Also, please see my notes in your paper for more details.
+
+
+Peace,
+
+- Dr. Rivas
