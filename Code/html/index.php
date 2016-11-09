@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
   <title>TrueCourse Login</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,9 +25,13 @@
       height: 100%;
     }
 
-    body {
-       background-color: #48d1cc;
-    }
+  body {
+        background: -webkit-linear-gradient( #48d1cc, #afeeee, white); /* For Safari 5.1 to 6 */
+        background: -o-linear-gradient(#48d1cc,#afeeee, white); /* For Opera 11.1 to 12.0/ */
+        background: -moz-linear-gradient(#48d1cc,#afeeee, white); /* For Firefox 3.6 to 15  */
+        background: linear-gradient(#48d1cc,#afeeee, white); /* Standard syntax (must be la st) */
+
+  }
     
     /* Set black background color, white text and some padding */
      footer {
@@ -59,7 +62,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <img src="true.jpg" class="img-rounded" alt="Cinque Terre" width="90" height="50">    </div>
+      <img src="http://10.10.7.164/img/true.jpg" class="img-rounded" alt="Cinque Terre" width="90" height="50">    </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         <li class="active"><a href="#">Login</a></li>
@@ -80,29 +83,37 @@
     <div class="col-sm-8 text-left">
 <div class="container-fluid">
 
-  <h1>Login</h1><br>
-  <form action="login_action.php" method="POST">
+<h1>Login</h1><br>
+<?php
+session_start();
+if (isset($_SESSION['Error'])){
+  echo 'Error Logging In: ';
+  print $_SESSION['Error'];
+  unset($_SESSION['Error']);
+}
+?>
+<form action="loginAction.php" method="POST">
   <div class="form-group">
-  <label for="email">Username:</label>
-  <input type="text" class="form-control" id="email">
-</div>
-<div class="form-group">
-  <label for="prof_password">Password:</label>
-  <input type="password" class="form-control" id="prof_password">
-</div>
-    <input type="submit" value="Login" id="submit"class="btn btn-primary" ></input><br>
-</div>
+    <label for="usr">Email:</label>
+    <input type="text" class="form-control" name="email" id="email">
+  </div>
+  <div class="form-group">
+    <label for="pwd">Password:</label>
+    <input type="password" class="form-control" name="password" id="password">
+  </div>
+    <input type="submit" class="btn btn-primary"></input><br>
+  </div>
 </form>
-      <hr>
-		 <button type="button" class="btn btn-primary btn-sm">Sign Up!</button>
-		 <br>	
+    <hr>
+     <button type="button" class="btn btn-primary btn-sm">Sign Up!</button>
+     <br> 
 
     </div>
     <br>
     <div class="col-sm-2 sidenav">
 
-      <div class="well">
-        <p>Picture</p>
+      <div class="container-fluid">
+        <img src="http://10.10.7.164/img/people.jpg" class="img-rounded" height="112" width="168">
       </div>
     </div>
   </div>
@@ -112,9 +123,7 @@
   <p>True Course Life © 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc. 
 True Course Ministries, True Course Living, Learning, Leading; and True Course Life & Leadership Development are all registered trademarks.</p>
 </footer>
-<?php
 
-?>
+
 </body>
 </html>
-

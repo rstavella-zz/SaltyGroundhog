@@ -1,3 +1,4 @@
+
 <?php
 
 function load( $page ='index.php') {
@@ -27,8 +28,8 @@ function validate($db, $email = '', $prof_password = '') {
 
 
 	if(empty($errors)) {
-		$q = "SELECT prof_id, first_name
-			  FROM professionals
+		$q = "SELECT p.prof_id, p.first_name
+			  FROM professionals as p
 			  WHERE email = '$e'
 			  AND prof_password = '$p'";
 			  
