@@ -15,7 +15,9 @@ else if( isset( $_SESSION['prof_id'])) : ?>
   <title>TC Home</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="style.css" rel="stylesheet" type="text/css" media="all"/>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link href="stylecal.css" rel="stylesheet" type="text/css" media="all"/>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <style>
@@ -74,7 +76,7 @@ else if( isset( $_SESSION['prof_id'])) : ?>
        </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="home.php"><img src="http://10.10.7.164/img/true.jpg" class="img-rounded"  width="70" height="30"> </a></li>
+        <li class="active"><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"> </a></li>
         <li><a href="clientPage.php ">Clients</a></li>
 	<li><a href="professionalPage.php">Professionals</a></li>
         <li><a href="\Calendar\sample.php">Calendar</a></li>
@@ -92,19 +94,135 @@ else if( isset( $_SESSION['prof_id'])) : ?>
  
 <div class="container-fluid">
 
-  <h1>Home</h1><br>
+  <div id="container" class="ltr">
+  <header id="header" class="info">
+  <center><h1>Home</h1></center>
+  <div></div>
+  <center><h2>Today's Appointments<h2>
+  <div class="login-form">
+  <?php
+    $connect = pg_connect("host=10.10.7.159 dbname=maindb user=postgres password=SaltyGroundhogs");
+    if (!$connect) {
+        die(pg_error());
+    }
+    $date = date("d-m-Y");
+    $stringdate = (string)$date;
+    $stringdate = '\'' . $stringdate . '\'';
+    $results = pg_query("SELECT c.first_name, c.last_name, a.date, a.time, a.categories_id, cat.categories, a.categories_id, cat.categories_id FROM customers as c, professionals as p, appointments as a, categories as cat WHERE p.prof_id = " . $_SESSION['prof_id'] . " AND c.cust_id = a.cust_id AND a.categories_id = cat.categories_id AND a.date = " . $stringdate . " ORDER BY a.time ASC");
+      while($row = pg_fetch_array($results)) {
+  ?>
+  <tr>
+  <?php echo "<td>" . $row['first_name'] . $row['last_name']  . '- ' . $row['time'] . ' Event Type: ' . $row['categories'] . "</td><br>"?>
+   <?php
+   }
+  ?>
+  </div>
+    <div class="calcontainer">
+
+      <div class="calendar">
+
+        <header>        
+
+          <h2>December</h2>
+
+          <a class="btn-prev fontawesome-angle-left" href="#"></a>
+          <a class="btn-next fontawesome-angle-right" href="#"></a>
+
+        </header>
+        
+        <table>
+        
+          <thead>
+            
+            <tr>
+              
+              <td>Su</td>
+              <td>Mo</td>
+              <td>Tu</td>
+              <td>We</td>
+              <td>Th</td>
+              <td>Fr</td>
+              <td>Sa</td>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+            
+            <tr>
+              <td class="prev-month">26</td>
+              <td class="prev-month">27</td>
+              <td class="prev-month">28</td>
+              <td class="prev-month">29</td>
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>5</td>
+              <td>6</td>
+              <td class="current-day event">7</td>
+              <td>8</td>
+              <td>9</td>
+              <td class="event">10</td>
+            </tr>
+            <tr>
+              <td>11</td>
+              <td>12</td>
+              <td>13</td>
+              <td>14</td>
+              <td>15</td>
+              <td>16</td>
+              <td>17</td>
+            </tr>
+            <tr>
+              <td>18</td>
+              <td>19</td>
+              <td>20</td>
+              <td class="event">21</td>
+              <td>22</td>
+              <td>23</td>
+              <td>24</td>
+            </tr>
+
+            <tr>
+              <td>25</td>
+              <td>26</td>
+              <td>27</td>
+              <td>28</td>
+              <td>29</td>
+              <td>30</td>
+              <td>31</td>
+            </tr>
+            <tr>
+              <td class="next-month">1</td>
+              <td class="next-month">2</td>
+              <td class="next-month">3</td>
+              <td class="next-month">4</td>
+              <td class="next-month">5</td>
+              <td class="next-month">6</td>
+              <td class="next-month">7</td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div> <!-- end calendar -->
+
+    </div> <!-- end container -->
+
+  </header>
   <p>
 
   <br>
-  test <?php print $_SESSION['prof_id']; ?>
   <br>
   <br>
-  <br>
-  footer test <br>
   <br>
   </p>
 
-</div>
 </body>        
 
 <footer class="container-fluid text-center">

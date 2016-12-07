@@ -1,35 +1,22 @@
-<!--
-Credit to the Layout with the shaded Border
-Author: W3layouts
-Author URL: http://w3layouts.com
-License: Creative Commons Attribution 3.0 Unported
-License URL: http://creativecommons.org/licenses/by/3.0/
-
-Code written by the Salty Groundhogs Team
-Senior Project
-True Course Website
-This page allows a professional to add a new Client
--->
 
 <?php
-#Error Reporting that can be uncommented when a developer is testing queries or anything PHP related
-#error_reporting(-1); // display all faires
-#ini_set('display_errors', 1);  // ensure that faires will be seen
-#ini_set('display_startup_errors', 1); // display faires that didn't born
+    error_reporting(-1); // display all faires
+        ini_set('display_errors', 1);  // ensure that faires will be seen
+        ini_set('display_startup_errors', 1); // display faires that didn't born
 
-#Verifies that a professional is logged in.
-#This page is only viewable if you have the proper crednetials and are logged in. 
 include('loginValidate.php');
 session_start();
 if(!isset( $_SESSION['prof_id'])){
   load('index.php');
 }
-else if( isset( $_SESSION['prof_id'])) : ?>
+else if( isset( $_SESSION['prof_id'])) :
+$prof_id = $_SESSION['prof_id'];
+ ?>
 
 <!DOCTYPE HTML>
 <html>
 <head>
- <title>Create Client Profile</title>
+ <title>Edit Profile</title>
   <link href="style.css" rel="stylesheet" type="text/css" media="all"/>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -62,10 +49,10 @@ else if( isset( $_SESSION['prof_id'])) : ?>
         <li><a href="clientPage.php">Clients</a></li>
         <li><a href="professionalPage.php">Professionals</a></li>
         <li><a href="\Calendar\sample.php">Calendar</a></li>
-        <li class="active"><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="newClientPage.php">Add Client</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
+        <li class="active"><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
         <li><a href="settings.php"><span class="glyphicon glyphicon-cog"></span></a></li>
         <li><a href="index.php"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
       </ul>
@@ -73,36 +60,64 @@ else if( isset( $_SESSION['prof_id'])) : ?>
   </div>
 </nav>
 
-	<body>
+<body>
+<?php
+     error_reporting(-1); // display all faires
+        ini_set('display_errors', 1);  // ensure that faires will be seen
+        ini_set('display_startup_errors', 1); // display faires that didn't born
+
+$conn_string = "host=10.10.7.159 port=5432 dbname=maindb user=postgres password=SaltyGroudhogs";
+$dbconn4 = pg_connect($conn_string);
+
+if(isset($_SESSION['prof_id']))
+{
+
+$query = pg_query("SELECT p.prof_id, p.First_Name, p.Last_Name, p.Street_Address, p.Zipcode, p.state, p.city, p.country,
+                                                               p.phone_number, p.gender, p.email, p.bio
+                                                               FROM professionals as p
+                                                               WHERE p.prof_id = '$prof_id'");
+
+
+
+$results=pg_fetch_array($query);
+?>
+                <!---header--->
                 <div class="header w3ls">
-                        <h1>Create Client Profile</h1>
+                        <h1>Edit Professional Profile</h1>
                 </div>
+                <!---header--->
+                <!---main--->
                         <div class="main">
                                 <div class="main-section agile">
                                         <div class="login-form">
-                                                <form action="newClientPage.php" method="post">
+                                                <form action="editProfile.php?id=<?php echo $prof_id ?>" method="post">
                                                         <ul>
-                                                                 <li class="text-info">First Name *</li>
-                                                                 <li><input type="text" name="first_name" placeholder="First Name" required></li>
+                                                                 <li class="text-info">First Name: </li>
+                                                                 <li><input type="text" name="first_name" value="<?php echo $results['first_name']?>"></li>
                                                                  <div class="clear"></div>
 
-                                                                 <li class="text-info">Last Name *</li>
-                                                                 <li><input type="text" name="last_name" placeholder="Last Name" required></li>
+                                                                 <li class="text-info">Last Name: </li>
+                                                                 <li><input type="text" name="last_name" value="<?php echo $results['last_name']?>"></li>
                                                                  <div class="clear"></div>
 
                                                          </ul>
                                                          <ul>
-                                                                 <li class="text-info">Street Address *</li>
-                                                                 <li><input type="text" name="street_address" placeholder="Street Address" required></li>
+                                                                 <li class="text-info">Bio: </li>
+                                                                 <li><input type="textarea" name="bio" value="<?php echo $results['bio']?>"></li>
+                                                                 <div class="clear"></div>
+                                                         </ul>
+                                                                                                                  <ul>
+                                                                 <li class="text-info">Street Address: </li>
+                                                                 <li><input type="text" name="street_address" value="<?php echo $results['street_address']; ?>"></li>
                                                                  <div class="clear"></div>
 
-                                                                 <li class="text-info">City *</li>
-                                                                 <li><input type="text" name="city" placeholder="City" required></li>
+                                                                 <li class="text-info">City: </li>
+                                                                 <li><input type="text" name="city" value="<?php echo $results['city']?>"></li>
                                                                  <div class="clear"></div>
 
-                                                                 <li class="text-info">State *</li>
-                                                                 <li class="se"><select class="form-dropdown" id="state" name="state" required>
-                                                                        <option value="" selected="selected"></option>
+                                                                 <li class="text-info">State: </li>
+                                                                 <li class="se"><select class="form-dropdown" id="state" name="state">
+                                                                        <option value="<?php echo $results['state'];?>" selected="selected"><?php echo $results['state'];?></option>
                                                                         <option value="Alabama">Alabama</option>
                                                                         <option value="Alaska">Alaska</option>
                                                                         <option value="Arizona">Arizona</option>
@@ -157,9 +172,9 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                   </select></li>
                                                                  <div class="clear"></div>
 
-                                                                 <li class="text-info">Country *</li>
-                                                                 <li class="se"><select class="form-dropdown" id="country" name="country" required>
-                                                                        <option value="" selected="selected"></option>
+                                                                 <li class="text-info">Country: </li>
+                                                                 <li class="se"><select class="form-dropdown" id="country" name="country">
+                                                                        <option value="<?php echo $results['country'];?>" selected="selected"><?php echo $results['country'];?></option>
                                                                         <option value="United States" >United States</option>
                                                                         <option value="United Kingdom" >United Kingdom</option>
                                                                         <option value="Australia" >Australia</option>
@@ -364,280 +379,79 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                   </select></li>
                                                                  <div class="clear"></div>
 
-                                                                 <li class="text-info">Zip Code *</li>
-                                                                 <li><input type="text" name="zipcode" maxlength="5" placeholder="Zip Code" required></li>
+                                                                 <li class="text-info">Zip Code: </li>
+                                                                 <li><input type="text" name="zipcode" value="<?php echo $results['zipcode'];?>"></li>
                                                                  <div class="clear"></div>
 
                                                          </ul>
                                                          <ul>
-                                                                 <li class="text-info">Home Phone *</li>
-                                                                 <li><input type="text" name="home_phone" maxlength="10" placeholder="Home Phone" required></li>
-                                                                 <div class="clear"></div>
-
-                                                                 <li class="text-info">Cell Phone *</li>
-                                                                 <li><input type="text" name="cell_phone" maxlength="10" placeholder="Cell Phone" required></li>
-                                                                 <div class="clear"></div>
-
-                                                                 <li class="text-info">Work Phone *</li>
-                                                                 <li><input type="text" name="work_phone" maxlength="10" placeholder="Work Phone" required></li>
-                                                                 <div class="clear"></div>
-                                                         </ul>
-                                                         <ul>
-                                                                 <li class="text-info">Gender *</li>
-                                                                 <li class="se"><select class="form-dropdown" id="gender" name="gender" required>
-                                                                        <option value="" selected="selected"></option>
-									<option value="Female" >Female</option>
-									<option value="Male" >Male</option>
-                                                                  </select></li>
-                                                                 <div class="clear"></div>
-                                                         </ul>
-                                                         <ul>
-                                                                 <li class="text-info">Marital Status *</li>
-                                                                 <li class="se"><select class="form-dropdown" id="martital_status" name="martital_status" required>
-                                                                        <option value="" selected="selected"></option>
-                                                                        <option value="Single" >Single</option>
-                                                                        <option value="Married" >Married</option>
-                                                                        <option value="Divorced" >Divorced</option>
-                                                                        <option value="Widowed" >Widowed</option>
-                                                                  </select></li>
-                                                                 <div class="clear"></div>
-                                                         </ul>
-                                                         <ul>
-                                                                 <li class="text-info">Month *</li>
-                                                                 <li class="se"> <select class="form-dropdown" id="dob_month" name="dob_month" required>
-                                                                        <option value="" selected="selected"></option>
-                                                                        <option value="01">January</option>
-                                                                        <option value="02">Febuary</option>
-                                                                        <option value="03">March</option>
-                                                                        <option value="04">April</option>
-                                                                        <option value="05">May</option>
-                                                                        <option value="06">June</option>
-                                                                        <option value="07">July</option>
-                                                                        <option value="08">August</option>
-                                                                        <option value="09">September</option>
-                                                                        <option value="10">October</option>
-                                                                        <option value="11">November</option>
-                                                                        <option value="12">December</option>
-								 </select></li>
-                                                                 <div class="clear"></div>
-
-                                                                 <li class="text-info">Day *</li> <li class="se">
-                                                                 <select class="form-dropdown" id="dob_day" name="dob_day" required>
-                                                                        <option value="" selected="selected"></option>
-                                                                        <option value="1">1</option>
-                                                                        <option value="2">2</option>
-                                                                        <option value="3">3</option>
-                                                                        <option value="4">4</option>
-                                                                        <option value="5">5</option>
-                                                                        <option value="6">6</option>
-                                                                        <option value="7">7</option>
-                                                                        <option value="8">8</option>
-                                                                        <option value="9">9</option>
-                                                                        <option value="10">10</option>
-                                                                        <option value="11">11</option>
-                                                                        <option value="12">12</option>
-                                                                        <option value="13">13</option>
-                                                                        <option value="14">14</option>
-                                                                        <option value="15">15</option>
-                                                                        <option value="16">16</option>
-                                                                        <option value="17">17</option>
-                                                                        <option value="18">18</option>
-                                                                        <option value="19">19</option>
-                                                                        <option value="20">20</option>
-                                                                        <option value="21">21</option>
-                                                                        <option value="22">22</option>
-                                                                        <option value="23">23</option>
-                                                                        <option value="24">24</option>
-                                                                        <option value="25">25</option>
-                                                                        <option value="26">26</option>
-                                                                        <option value="27">27</option>
-                                                                        <option value="28">28</option>
-                                                                        <option value="29">29</option>
-                                                                        <option value="30">30</option>
-                                                                        <option value="31">31</option>
-                                                                 </select></li>
-                                                                 <div class="clear"></div>
-
-                                                                  <li class="text-info">Year *</li> <li class="se">
-                                                                 <select class="form-dropdown" id="dob_year" name="dob_year" required>
-                                                                        <option value="" selected="selected"></option>
-                                                                        <option value="2016">2016</option>
-                                                                        <option value="2015">2015</option>
-                                                                        <option value="2014">2014</option>
-                                                                        <option value="2013">2013</option>
-                                                                        <option value="2012">2012</option>
-                                                                        <option value="2011">2011</option>
-                                                                        <option value="2010">2010</option>
-                                                                        <option value="2009">2009</option>
-                                                                        <option value="2008">2008</option>
-                                                                        <option value="2007">2007</option>
-                                                                        <option value="2006">2006</option>
-                                                                        <option value="2005">2005</option>
-                                                                        <option value="2004">2004</option>
-                                                                        <option value="2003">2003</option>
-                                                                        <option value="2002">2002</option>
-                                                                        <option value="2001">2001</option>
-                                                                        <option value="2000">2000</option>
-                                                                        <option value="1999">1999</option>
-                                                                        <option value="1998">1998</option>
-                                                                        <option value="1997">1997</option>
-                                                                        <option value="1996">1996</option>
-                                                                        <option value="1995">1995</option>
-                                                                        <option value="1994">1994</option>
-                                                                        <option value="1993">1993</option>
-                                                                        <option value="1992">1992</option>
-                                                                        <option value="1991">1991</option>
-                                                                        <option value="1990">1990</option>
-                                                                        <option value="1989">1989</option>
-                                                                        <option value="1988">1988</option>
-                                                                        <option value="1987">1987</option>
-                                                                        <option value="1986">1986</option>
-                                                                        <option value="1985">1985</option>
-                                                                        <option value="1984">1984</option>
-                                                                        <option value="1983">1983</option>
-                                                                        <option value="1982">1982</option>
-                                                                        <option value="1981">1981</option>
-                                                                        <option value="1980">1980</option>
-                                                                        <option value="1979">1979</option>
-                                                                        <option value="1978">1978</option>
-                                                                        <option value="1977">1977</option>
-                                                                        <option value="1976">1976</option>
-                                                                        <option value="1975">1975</option>
-                                                                        <option value="1974">1974</option>
-                                                                        <option value="1973">1973</option>
-                                                                        <option value="1972">1972</option>
-                                                                        <option value="1971">1971</option>
-                                                                        <option value="1970">1970</option>
-                                                                        <option value="1969">1969</option>
-                                                                        <option value="1968">1968</option>
-                                                                        <option value="1967">1967</option>
-                                                                        <option value="1966">1966</option>
-                                                                        <option value="1965">1965</option>
-                                                                        <option value="1964">1964</option>
-                                                                        <option value="1963">1963</option>
-                                                                        <option value="1962">1962</option>
-                                                                        <option value="1961">1961</option>
-                                                                        <option value="1960">1960</option>
-                                                                        <option value="1959">1959</option>
-                                                                        <option value="1958">1958</option>
-                                                                        <option value="1957">1957</option>
-                                                                        <option value="1956">1956</option>
-                                                                        <option value="1955">1955</option>
-                                                                        <option value="1954">1954</option>
-                                                                        <option value="1953">1953</option>
-                                                                        <option value="1952">1952</option>
-                                                                        <option value="1951">1951</option>
-                                                                        <option value="1950">1950</option>
-                                                                        <option value="1949">1949</option>
-                                                                        <option value="1948">1948</option>
-                                                                        <option value="1947">1947</option>
-                                                                  </select></li>
-                                                                 <div class="clear"></div>
-
-                                                         </ul>
-                                                         <ul>
-                                                                  <li class="text-info">Prefered Call Time *</li> <li class="se">
-                                                                  <select class="form-dropdown" id="pref_call_time" name="pref_call_time" required>
-                                                                        <option value="" selected="selected"></option>
-                                                                        <option value="Early Morning" >Early Morning</option>
-                                                                        <option value="Morning" >Morning</option>
-                                                                        <option value="Late Morning" >Late Morning</option>
-                                                                        <option value="Early Afternoon" >Early Afternoon</option>
-                                                                        <option value="Afternoon" >Afternoon</option>
-                                                                        <option value="Late Afternoon" >Late Afternoon</option>
-                                                                        <option value="Early Evening" >Early Evening</option>
-                                                                        <option value="Evening" >Evening</option>
-                                                                        <option value="Late Evening">Late Evening</option>
-                                                                        </select></li>
+                                                                 <li class="text-info">Phone Number: </li>
+                                                                 <li><input type="text" name="phone_number" value="<?php echo $results['phone_number'];?>"></li>
                                                                  <div class="clear"></div>
                                                         </ul>
                                                         <ul>
-								<li class="text-info">Self Awareness Practice *</li>
-									<li><input type="text" name="self_awareness_practice" placeholder="Yoga, Meditation, Prayer, etc." required></li>
-                                                                 <div class="clear"></div>
-                                                        </ul>
-                                                         <ul>
-                                                                 <li class="text-info">Email *</li>
-                                                                 <li><input type="text" name="email" placeholder="Email" required></li>
+                                                                 <li class="text-info">Gender: </li>
+                                                                 <li class="se"><select class="form-dropdown" id="gender" name="gender">
+                                                                        <option value="<?php echo $results['gender'];?>" selected="selected"><?php echo $results['gender'];?></option>
+                                                                        <option value="Female" >Female</option>
+                                                                        <option value="Male" >Male</option>
+                                                                  </select></li>
                                                                  <div class="clear"></div>
                                                          </ul>
-							<ul>
-                                                        	<li><input type="submit" class="btn btn-primary" name="submit" value="Submit"></li>
-								<div class="clear"></div>
+                                                         <ul>
+							 <li><input type=button class="btn btn-primary" onClick="location.href='uploadProfImage.php?id=<?php echo $prof_id ?>'" value='Upload Professional Profile Photo'></li><br>
+ 
 							</ul>
-                                                </form>
+							 <ul>
+                                                                <li><input type="submit" class="btn btn-primary" name="submit" value="Update"></li>
+                                                                <div class="clear"></div>
+                                                        </ul>
+
+</form>
                                         </div>
                                 </div>
                         </div>
-                        <br>
+<br>
 <footer class="container-fluid text-center">
-    <p>True Course Life © 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
+  <p>True Course Life © 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
        True Course Ministries, True Course Living, Learning, Leading; and True Course Life & Leadership Development are all registered trademarks. </p>
 </footer>
 
+
 <?php
-	if(isset($_POST['submit'])){
 
-        $conn_string = "host=10.10.7.159 port=5432 dbname=maindb user=postgres password=SaltyGroudhogs";
-        $dbconn4 = pg_connect($conn_string);
+ if(isset($_POST['submit']))
+	{
+	 $prof_id = $_SESSION['prof_id'];
 
-        $prof_id = $_SESSION['prof_id'];
-        $active_status = "Active";
+	$first_name=$_POST['first_name'];
+	$last_name=$_POST['last_name'];
+	$street_address=$_POST['street_address'];
+	$zipcode=$_POST['zipcode'];
+	$state=$_POST['state'];
+	$city=$_POST['city'];
+	$country=$_POST['country'];
+	$phone_number=$_POST['phone_number'];
+	$gender=$_POST['gender'];
+	$bio=$_POST['bio'];
 
-        if(isset($_POST['dob_month'])){ $month = $_POST['dob_month']; }
-        if(isset($_POST['dob_day'])){ $day = $_POST['dob_day']; }
-        if(isset($_POST['dob_year'])){ $year = $_POST['dob_year']; }
+	$query1=pg_query("update professionals set first_name='$first_name', last_name='$last_name', street_address='$street_address', city='$city', state='$state', country='$country', phone_number='$phone_number', gender='$gender', bio='$bio'  where prof_id='$prof_id'");
 
-        $month = $_POST['dob_month'];
-        $day = $_POST['dob_day'];
-        $year = $_POST['dob_year'];
-        $dob =  $month."-".$day."-".$year;
-
-        if(isset($_POST['first_name'])){ $first_name = $_POST['first_name']; }
-        if(isset($_POST['last_name'])){ $last_name = $_POST['last_name']; }
-        if(isset($_POST['street_address'])){ $street_address = $_POST['street_address']; }
-        if(isset($_POST['zipcode'])){ $zipcode = $_POST['zipcode']; }
-        if(isset($_POST['state'])){ $state = $_POST['state']; }
-        if(isset($_POST['city'])){ $city = $_POST['city']; }
-        if(isset($_POST['country'])){ $country = $_POST['country']; }
-        if(isset($_POST['home_phone'])){ $home_phone = $_POST['home_phone']; }
-	if(isset($_POST['work_phone'])){ $work_phone = $_POST['work_phone']; } 
-        if(isset($_POST['cell_phone'])){ $cell_phone = $_POST['cell_phone']; } 
-	if(isset($_POST['martital_status'])){ $martital_status = $_POST['martital_status']; }
-        if(isset($_POST['email'])){ $email = $_POST['email']; }
-        if(isset($_POST['gender'])){ $gender = $_POST['gender']; }
-        if(isset($_POST['pref_call_time'])){ $pref_call_time = $_POST['pref_call_time']; }
-        if(isset($_POST['self_awareness_practice'])){ $self_awareness_practice = $_POST['self_awareness_practice']; }
-        $custr_id = "00";
-        $relation = "null";
-	$custpic_url = "notUploaded";
-       	$query = "INSERT INTO customers VALUES (nextval('customers_cust_id_seq'), '" . $custr_id . "','" . $relation ."', '" . $first_name . "','" . $last_name . "',
-                        '" . $active_status . "', '" . $street_address . "','" . $zipcode . "', '" . $state . "', '" . $city . "', '" . $country . "', '" . $home_phone . "',
-                        '" . $work_phone . "', '" .$cell_phone . "', '" . $gender . "', '" . $martital_status . "', '" . $email . "','" . $dob . "', '" . $custpic_url . "')";
-	
-       	$query2 = "INSERT INTO customer_bios (cust_id, pref_call_time, self_awareness_practice) VALUES ((currval('customers_cust_id_seq')), '" . $pref_call_time . "', '" . $self_awareness_practice . "')";
-       	$query3 = "INSERT INTO clientprofessional (prof_id, cust_id) VALUES ('" . $prof_id . "', (currval('customers_cust_id_seq')))";
-
-       	$result = pg_query($dbconn4, $query);
-      	$result2 = pg_query($dbconn4, $query2);
-	$result3 = pg_query($dbconn4, $query3);
-
-
-        if (!$result || !$result2 || !$result3) {
+        if (!$query1) {
             $errormessage = pg_last_error();
              $message = "Error with entry. Please check fields.";
              echo "<script type='text/javascript'>alert('$message');</script>";
+
             exit();
         }else{
-            $message = "These values were inserted into the database";
-            echo "<script type='text/javascript'>alert('$message');</script>";
+            $message = "These values were updated into the database";
+            echo "<script type='text/javascript'>alert('$message'); document.location.href = 'myProfile.php';</script>";
         }
-     }
-        pg_close();
+}
+         }
 ?>
 
 </body>
 </html>
 
 <?php endif; ?>
-

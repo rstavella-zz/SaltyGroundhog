@@ -5,10 +5,10 @@ Author URL: http://w3layouts.com
 License: Creative Commons Attribution 3.0 Unported
 License URL: http://creativecommons.org/licenses/by/3.0/
 
-Code Written by the Salty Groundhogs Team
+Code written by the Salty Groundhogs Team
 Senior Project
 True Course Website
-This page is to view all clients a professional has  within the True Course company
+This page allows a professional to their profile
 -->
 
 <?php
@@ -18,27 +18,28 @@ This page is to view all clients a professional has  within the True Course comp
 #ini_set('display_startup_errors', 1); // display faires that didn't born
 
 #Verifies that a professional is logged in.
-#This page is only viewable if you have the proper crednetials and are logged in. 
-include('loginValidate.php'); 
+#This page is only viewable if you have the proper crednetials and are logged in.    
+include('loginValidate.php');
 session_start();
 error_reporting(-1); // display all faires
 ini_set('display_errors', 1);  // ensure that faires will be seen
 ini_set('display_startup_errors', 1); // display faires that didn't born
 if(!isset( $_SESSION['prof_id'])){
-   load('index.php');
+    load('index.php');
 }
 else if( isset( $_SESSION['prof_id'])) : ?>
 
 <html lang="en">
 <head>
- <title>My Clients</title>
+ <title>My Profile</title>
   <link href="style.css" rel="stylesheet" type="text/css" media="all"/>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <!--web-fonts-->
   <link href='//fonts.googleapis.com/css?family=Ubuntu:400,300,300italic,400italic,500,500italic,700,700italic' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <!--web-fonts-->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -59,14 +60,14 @@ else if( isset( $_SESSION['prof_id'])) : ?>
        </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
-        <li class="active"><a href="clientPage.php">Clients</a></li>
-	<li><a href="professionalPage.php">Professionals</a></li>
+        <li><a href="home.html"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
+        <li><a href="clientPage.php">Clients</a></li>
+        <li><a href="professionalPage.php">Professionals</a></li>
         <li><a href="\Calendar\sample.php">Calendar</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
+        <li class="active"><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
         <li><a href="settings.php"><span class="glyphicon glyphicon-cog"></span></a></li>
         <li><a href="index.php"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
       </ul>
@@ -75,54 +76,76 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 </nav>
 
 <body>
-<div class="header w3ls">
-	<h1>Clients</h1>
-</div>
-<div class="main">
-   <div class="main-section agile">
-	<div class="login-form">
-		<?php
-			$conn_string = "host=10.10.7.159 port=5432 dbname=maindb user=postgres password=SaltyGroudhogs";
-			$dbconn4 = pg_connect($conn_string);
-	  	     	$prof_id =  $_SESSION['prof_id']; 
-		        if (!$dbconn4) {
-                	    die(pg_error());
-            		}		
-		        $results = pg_query("SELECT cp.cust_id, cp.prof_id, c.custpic_url, c.first_name, c.last_name, c.active_status 
-						 FROM clientprofessional as cp, customers as c 
-						 WHERE cp.prof_id = '$prof_id' AND cp.cust_id = c.cust_id ORDER BY c.active_status ASC, c.first_name ASC");
-			while($row = pg_fetch_array($results)) {
-				$active_status = $row['active_status'];	
-				$cust_id = $row['cust_id'];
-				#Checks if the photo should be a profile photo or generic stock photo
-				if ($row['custpic_url'] == "notUploaded"){
-					$custpic_url = "/uploads/noProfilePhoto.png";
-				} else {
-					$custpic_url = $row['custpic_url'];
-				}
-	 			echo "<h2><a href=\"customerProfilePage.php?id={$row['cust_id']}\">{$row['first_name']} {$row['last_name']}</a></h2>";
-	    	?>
-		<ul>
-        		<li><img src="<?php echo $custpic_url?>" style="width:100px;height:100px;"></img></center></li>
-		</ul>
-	    	<?php	
-			echo "$active_status"; #Print Active status for each Client
-		?>
-		<br><br>
-		<?php
-			echo "<a href=\"shareProfile.php?id={$row['cust_id']}\"><input class='btn btn-primary' type='button' value='Share Client'/></a>";
-	   		} #While Loop Close	
-		?>
-	</div>
+      <?php
+        $connect = pg_connect("host=10.10.7.159 dbname=maindb user=postgres password=SaltyGroundhogs");
+        if (!$connect) {
+            die(pg_error());
+        }
+        $id = $_SESSION['prof_id'];
+        $results = pg_query("SELECT * FROM professionals as p WHERE prof_id = ' $id '");
+        while($row = pg_fetch_array($results)) {
+			 if ($row['prof_picture_url'] == "notUploaded"){
+                      $prof_picture_url = "/uploads/noProfilePhoto.png";
+                  } else {
+                      $prof_picture_url = $row['prof_picture_url'];
+                 }
+
+        ?>
+      <h1 align="center"><?php echo $row['first_name']?> <?php echo $row['last_name']?></h1>
+  <!---main--->
+  <div class="main">
+    <div class="main-section agile">
+       <div class="login-form">
+			  <ul>
+				<li><b>Profile Picture</b></li>
+			  </ul>
+			  <ul>
+				<li><img src="<?php echo $prof_picture_url?>" style="width:100px;height:100px;"></img></center></li><br>
+			  </ul>
+			  <ul>
+				<li><b>Address</b></li>
+			  </ul>
+			  <ul>
+				<li><?php echo $row['street_address']?></li>
+				<li><?php echo $row['city']?> <?php echo $row['state']?> <?php echo $row['zipcode']?></li>
+				<li><?php echo $row['country']?></li>
+			  </ul>
+			  <ul>
+				<li><b>Phone Number</b></li>
+			  </ul>
+			  <ul>
+				<li><?php echo $row['phone_number']?></li>
+			  </ul>
+			  <ul>
+				<li><b>Gender</b></li>
+			  </ul>
+			  <ul>
+				<li><?php echo $row['gender']?></li>
+			  </ul>
+			  <ul>
+				<li><b>Bio</b></li>
+			  </ul>
+			  <ul>
+				<li><?php echo $row['bio']?></li>
+			  </ul>
+			  <?php
+			  }
+			  ?>
+			  <ul>
+				<li><input type="button" class="btn btn-primary" onclick="location.href='editProfile.php'" value="Edit Profile" /></li>
+			  </ul>
+			</div>
     </div>
-</div>
+  </div>
 <br>
+
 <footer class="container-fluid text-center">
-  <p>True Course Life Â© 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc. 
-     True Course Ministries, True Course Living, Learning, Leading; and True Course Life & Leadership Development are all registered trademarks.</p>
+	<p>True Course Life © 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
+	   True Course Ministries, True Course Living, Learning, Leading; and True Course Life & Leadership Development are all registered trademarks.</p>
 </footer>
 
 </body>
 </html>
 
 <?php endif; ?>
+

@@ -8,7 +8,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 Code written by the Salty Groundhogs Team
 Senior Project
 True Course Website
-This page allows a professional to add a new Client
+This page allows a professional to add a new Family Member
 -->
 
 <?php
@@ -21,15 +21,17 @@ This page allows a professional to add a new Client
 #This page is only viewable if you have the proper crednetials and are logged in. 
 include('loginValidate.php');
 session_start();
+$identity = $_GET['id'];
 if(!isset( $_SESSION['prof_id'])){
   load('index.php');
 }
+
 else if( isset( $_SESSION['prof_id'])) : ?>
 
 <!DOCTYPE HTML>
 <html>
 <head>
- <title>Create Client Profile</title>
+ <title>Add Family Member</title>
   <link href="style.css" rel="stylesheet" type="text/css" media="all"/>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -59,10 +61,10 @@ else if( isset( $_SESSION['prof_id'])) : ?>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         <li><a href="home.php"><img src="true.jpg" class="img-rounded" alt="Home" width="70" height="30"> </a></li>
-        <li><a href="clientPage.php">Clients</a></li>
+        <li class="active"><a href="clientPage.php">Clients</a></li>
         <li><a href="professionalPage.php">Professionals</a></li>
         <li><a href="\Calendar\sample.php">Calendar</a></li>
-        <li class="active"><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="newClientPage.php">Add Client</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -75,12 +77,12 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 
 	<body>
                 <div class="header w3ls">
-                        <h1>Create Client Profile</h1>
+                        <h1>Add Family Member</h1>
                 </div>
                         <div class="main">
                                 <div class="main-section agile">
                                         <div class="login-form">
-                                                <form action="newClientPage.php" method="post">
+                                                <form action="newFamilyMember.php?id=<?php echo $identity ?>" method="post">
                                                         <ul>
                                                                  <li class="text-info">First Name *</li>
                                                                  <li><input type="text" name="first_name" placeholder="First Name" required></li>
@@ -89,7 +91,18 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                  <li class="text-info">Last Name *</li>
                                                                  <li><input type="text" name="last_name" placeholder="Last Name" required></li>
                                                                  <div class="clear"></div>
-
+								
+								 <li class="text-info">Relation *</li>
+                                                                 <li class="se"> <select class="form-dropdown" id="relation" name="relation" required>
+                                                                        <option value="" selected="selected"></option>
+                                                                        <option value="Mother">Mother</option>
+                                                                        <option value="Father">Father</option>
+                                                                        <option value="Daughter">Daughter</option>
+                                                                        <option value="Son">Son</option>
+                                                                        <option value="Sister">Sister</option>
+                                                                        <option value="Brother">Brother</option>
+                                                                 </select></li>
+                                                                 <div class="clear"></div>
                                                          </ul>
                                                          <ul>
                                                                  <li class="text-info">Street Address *</li>
@@ -365,21 +378,21 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                  <div class="clear"></div>
 
                                                                  <li class="text-info">Zip Code *</li>
-                                                                 <li><input type="text" name="zipcode" maxlength="5" placeholder="Zip Code" required></li>
+                                                                 <li><input type="text" name="zipcode" placeholder="Zip Code" required></li>
                                                                  <div class="clear"></div>
 
                                                          </ul>
                                                          <ul>
                                                                  <li class="text-info">Home Phone *</li>
-                                                                 <li><input type="text" name="home_phone" maxlength="10" placeholder="Home Phone" required></li>
+                                                                 <li><input type="text" name="home_phone" placeholder="Home Phone" required></li>
                                                                  <div class="clear"></div>
 
                                                                  <li class="text-info">Cell Phone *</li>
-                                                                 <li><input type="text" name="cell_phone" maxlength="10" placeholder="Cell Phone" required></li>
+                                                                 <li><input type="text" name="cell_phone" placeholder="Cell Phone" required></li>
                                                                  <div class="clear"></div>
 
                                                                  <li class="text-info">Work Phone *</li>
-                                                                 <li><input type="text" name="work_phone" maxlength="10" placeholder="Work Phone" required></li>
+                                                                 <li><input type="text" name="work_phone" placeholder="Work Phone" required></li>
                                                                  <div class="clear"></div>
                                                          </ul>
                                                          <ul>
@@ -388,17 +401,6 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                         <option value="" selected="selected"></option>
 									<option value="Female" >Female</option>
 									<option value="Male" >Male</option>
-                                                                  </select></li>
-                                                                 <div class="clear"></div>
-                                                         </ul>
-                                                         <ul>
-                                                                 <li class="text-info">Marital Status *</li>
-                                                                 <li class="se"><select class="form-dropdown" id="martital_status" name="martital_status" required>
-                                                                        <option value="" selected="selected"></option>
-                                                                        <option value="Single" >Single</option>
-                                                                        <option value="Married" >Married</option>
-                                                                        <option value="Divorced" >Divorced</option>
-                                                                        <option value="Widowed" >Widowed</option>
                                                                   </select></li>
                                                                  <div class="clear"></div>
                                                          </ul>
@@ -535,32 +537,6 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                  <div class="clear"></div>
 
                                                          </ul>
-                                                         <ul>
-                                                                  <li class="text-info">Prefered Call Time *</li> <li class="se">
-                                                                  <select class="form-dropdown" id="pref_call_time" name="pref_call_time" required>
-                                                                        <option value="" selected="selected"></option>
-                                                                        <option value="Early Morning" >Early Morning</option>
-                                                                        <option value="Morning" >Morning</option>
-                                                                        <option value="Late Morning" >Late Morning</option>
-                                                                        <option value="Early Afternoon" >Early Afternoon</option>
-                                                                        <option value="Afternoon" >Afternoon</option>
-                                                                        <option value="Late Afternoon" >Late Afternoon</option>
-                                                                        <option value="Early Evening" >Early Evening</option>
-                                                                        <option value="Evening" >Evening</option>
-                                                                        <option value="Late Evening">Late Evening</option>
-                                                                        </select></li>
-                                                                 <div class="clear"></div>
-                                                        </ul>
-                                                        <ul>
-								<li class="text-info">Self Awareness Practice *</li>
-									<li><input type="text" name="self_awareness_practice" placeholder="Yoga, Meditation, Prayer, etc." required></li>
-                                                                 <div class="clear"></div>
-                                                        </ul>
-                                                         <ul>
-                                                                 <li class="text-info">Email *</li>
-                                                                 <li><input type="text" name="email" placeholder="Email" required></li>
-                                                                 <div class="clear"></div>
-                                                         </ul>
 							<ul>
                                                         	<li><input type="submit" class="btn btn-primary" name="submit" value="Submit"></li>
 								<div class="clear"></div>
@@ -569,14 +545,14 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                         </div>
                                 </div>
                         </div>
-                        <br>
+<br>
 <footer class="container-fluid text-center">
-    <p>True Course Life Â© 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
+    <p>True Course Life © 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
        True Course Ministries, True Course Living, Learning, Leading; and True Course Life & Leadership Development are all registered trademarks. </p>
 </footer>
 
 <?php
-	if(isset($_POST['submit'])){
+     if(isset($_POST['submit'])){
 
         $conn_string = "host=10.10.7.159 port=5432 dbname=maindb user=postgres password=SaltyGroudhogs";
         $dbconn4 = pg_connect($conn_string);
@@ -603,34 +579,31 @@ else if( isset( $_SESSION['prof_id'])) : ?>
         if(isset($_POST['home_phone'])){ $home_phone = $_POST['home_phone']; }
 	if(isset($_POST['work_phone'])){ $work_phone = $_POST['work_phone']; } 
         if(isset($_POST['cell_phone'])){ $cell_phone = $_POST['cell_phone']; } 
-	if(isset($_POST['martital_status'])){ $martital_status = $_POST['martital_status']; }
         if(isset($_POST['email'])){ $email = $_POST['email']; }
         if(isset($_POST['gender'])){ $gender = $_POST['gender']; }
-        if(isset($_POST['pref_call_time'])){ $pref_call_time = $_POST['pref_call_time']; }
-        if(isset($_POST['self_awareness_practice'])){ $self_awareness_practice = $_POST['self_awareness_practice']; }
-        $custr_id = "00";
-        $relation = "null";
-	$custpic_url = "notUploaded";
-       	$query = "INSERT INTO customers VALUES (nextval('customers_cust_id_seq'), '" . $custr_id . "','" . $relation ."', '" . $first_name . "','" . $last_name . "',
+	if(isset($_POST['relation'])){ $relation = $_POST['relation']; }
+
+	$custpic_url = "null";
+	$martital_status = "null";
+	$pref_call_time = "null";
+	$self_awareness_practice = "null";
+	$email = "null";
+       	$query = "INSERT INTO customers VALUES (nextval('customers_cust_id_seq'), '" . $identity . "','" . $relation ."', '" . $first_name . "','" . $last_name . "',
                         '" . $active_status . "', '" . $street_address . "','" . $zipcode . "', '" . $state . "', '" . $city . "', '" . $country . "', '" . $home_phone . "',
                         '" . $work_phone . "', '" .$cell_phone . "', '" . $gender . "', '" . $martital_status . "', '" . $email . "','" . $dob . "', '" . $custpic_url . "')";
 	
-       	$query2 = "INSERT INTO customer_bios (cust_id, pref_call_time, self_awareness_practice) VALUES ((currval('customers_cust_id_seq')), '" . $pref_call_time . "', '" . $self_awareness_practice . "')";
-       	$query3 = "INSERT INTO clientprofessional (prof_id, cust_id) VALUES ('" . $prof_id . "', (currval('customers_cust_id_seq')))";
 
        	$result = pg_query($dbconn4, $query);
-      	$result2 = pg_query($dbconn4, $query2);
-	$result3 = pg_query($dbconn4, $query3);
 
 
-        if (!$result || !$result2 || !$result3) {
+        if (!$result) {
             $errormessage = pg_last_error();
              $message = "Error with entry. Please check fields.";
              echo "<script type='text/javascript'>alert('$message');</script>";
             exit();
         }else{
             $message = "These values were inserted into the database";
-            echo "<script type='text/javascript'>alert('$message');</script>";
+            echo "<script type='text/javascript'>alert('$message'); document.location.href = 'customerProfilePage.php?id=$identity';</script>";
         }
      }
         pg_close();

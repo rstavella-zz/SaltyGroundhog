@@ -1,4 +1,24 @@
+<!--
+Credit to the Layout with the shaded Border
+Author: W3layouts
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+
+Code written by the Salty Groundhogs Team
+Senior Project
+True Course Website
+This page is to have a bried overview of a client or do some edits on a clients profile
+-->
+
 <?php
+#Error Reporting that can be uncommented when a developer is testing queries or anything PHP related
+#error_reporting(-1); // display all faires
+#ini_set('display_errors', 1);  // ensure that faires will be seen
+#ini_set('display_startup_errors', 1); // display faires that didn't born
+
+#Verifies that a professional is logged in.
+#This page is only viewable if you have the proper crednetials and are logged in. 
 include('loginValidate.php'); 
 session_start();
 error_reporting(-1); // display all faires
@@ -11,88 +31,22 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 
 <html lang="en">
 <head>
-  <title>Customer Profile</title>
+ <title>Customer Profile</title>
+  <link href="style.css" rel="stylesheet" type="text/css" media="all"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <!--web-fonts-->
+  <link href='//fonts.googleapis.com/css?family=Ubuntu:400,300,300italic,400italic,500,500italic,700,700italic' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <style media="screen" type="text/css">
-  .table th, .table td {
-     border-top: none !important;
-     font-size:25px;
-     border-collapse:separate;
-     border-spacing:3em;
-  }
-  </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <style>
-    /* Remove the navbar's default margin-bottom and rounded borders */
-    .navbar {
-      margin-bottom: 0;
-      border-radius: 0;
-    }
-
-    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-    .row.content {height: 800px}
-
-    /* Set gray background color and 100% height */
-    .sidenav {
-      padding-top: 20px;
-      background-color: #008b8b;
-      height: 100%;
-    }
-
-     body {
-        background: -webkit-linear-gradient( #48d1cc, #afeeee, white); /* For Safari 5.1 to 6 */
-        background: -o-linear-gradient(#48d1cc,#afeeee, white); /* For Opera 11.1 to 12.0/ */
-        background: -moz-linear-gradient(#48d1cc,#afeeee, white); /* For Firefox 3.6 to 15  */
-        background: linear-gradient(#48d1cc,#afeeee, white); /* Standard syntax (must be la st) */
-
-  }
-
-   /* Set black background color, white text and some padding */
-    footer {
-      background-color: #555;
-      color: white;
-      font-size: 10px;
-      padding: 15px;
-   }
-    /* On small screens, set height to 'auto' for sidenav and grid */
-    @media screen and (max-width: 767px) {
-      .sidenav {
-        height: auto;
-        padding: 15px;
-      }
-      .row.content {height:auto;}
-            @media only screen and (max-width: 800px) {
-        /* Force table to not be like tables anymore */
-        #no-more-tables table,
-        #no-more-tables thead,
-        #no-more-tables tbody,
-        #no-more-tables th,
-        #no-more-tables td,
-        #no-more-tables tr {
-        display: block;
-        }
-
-        /* Hide table headers (but not display: none;, for accessibility) */
-        #no-more-tables thead tr {
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-        }
-
-
-        #no-more-tables td {
-        /* Behave like a "row" */
-        position: relative;
-        padding-left: 50%;
-        text-align:left;
-        }
-
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
 </head>
-<body>
 
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
@@ -105,7 +59,7 @@ else if( isset( $_SESSION['prof_id'])) : ?>
        </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li><a href="home.html"><img src="http://10.10.7.164/img/true.jpg" class="img-rounded"  width="70" height="30"></a></li>
+        <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li class="active"><a href="clientPage.php">Clients</a></li>
 	<li><a href="professionalPage.php">Professionals</a></li>
         <li><a href="\Calendar\sample.php">Calendar</a></li>
@@ -120,38 +74,60 @@ else if( isset( $_SESSION['prof_id'])) : ?>
   </div>
 </nav>
 
-<body id="public" onorientationchange="window.scrollTo(0, 1)">
-
-<div id="no-more-tables">
-<table class="table-condensed cf" style="border-collapse:separate; border-spacing:1em; border-top: none !important;">
-      <tbody>
-        <?php
+<body>
+<div class="main">
+   <div class="main-section agile">
+      <div class="login-form">
+	<?php
             $connect = pg_connect("host=10.10.7.159 dbname=maindb user=postgres password=SaltyGroundhogs");
 	    $identity=$_GET['id'];
             if (!$connect) {
                 die(pg_error());
             }
 	    
-            $results = pg_query("SELECT *  FROM customers WHERE cust_id = ' $identity '");	    
-            while($row = pg_fetch_array($results)) {
+            $query1 = pg_query("SELECT *  FROM customers WHERE cust_id = ' $identity '");	    
+	    $query2 = pg_query("SELECT cust_id, first_name, last_name, relation FROM customers  WHERE custr_id= '$identity '");
+            while($row = pg_fetch_array($query1)) {
+	  	  if ($row['custpic_url'] == "notUploaded"){
+                      $custpic_url = "/uploads/noProfilePhoto.png";
+                  } else {
+                      $custpic_url = $row['custpic_url'];
+                  }  
             ?>
-                        <h1 align="center"><?php echo $row['last_name']?>, <?php echo $row['first_name']?></h1><br>
-                        <center><img src="/uploads/Steve_Harvey_September_2008.jpg"style="width:304px;height:304px;"></img></center>
-			<center><h3><?php echo "<a href=\"customerFullBio.php?id={$identity}\">Full Customer Bio</a>";?> </h3></center>
-			<center><h3>Customer Calendar</h3></center>
-			<center><h3>Customer Events</h3></center>
-	   <?php
-            }
-            ?>
-            </tbody>
-  </table>
-  </div>
+		<ul>
+			<li><b><u><font size="5"><?php echo $row['first_name']?> <?php echo $row['last_name']?></font></u></b><br></li>
+			<li><img src="<?php echo $custpic_url?>" style="width:100px;height:100px;"></img></center></li><br>
+	    <?php
+	    } #Close while loop
+	    ?>
+	    <ul>
+            	<li><input type=button class="btn btn-primary" onClick="location.href='uploadImage.php?id=<?php echo $identity ?>'" value='Upload Client Profile Photo'></li><br>
+            	<li><input type=button class="btn btn-primary" onClick="location.href='customerFullBio.php?id=<?php echo $identity ?>'" value='View Client Profile'></li><br>
+	    	<li><input type=button class="btn btn-primary" onClick="location.href='newFamilyMember.php?id=<?php echo $identity ?>'" value='Add Family Member'></li><br>
 
-                <footer class="container-fluid text-center">
-                  <p>True Course Life Â© 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
-True Cours</p>
-                </footer>
-    </body>
+	    <?php
+	     while($row2 = pg_fetch_array($query2)) {
+		   $first_name=$row2['first_name'];
+		   $last_name=$row2['last_name'];
+		   $familyId=$row2['cust_id'];
+	    ?>
+	           <li><font size="4"><?php echo "<a href=\" familyMemeberFullBio.php?id={$familyId}\"> $first_name $last_name </a>";?> : <?php echo $row2['relation']?></font></li><br>
+	    <?php
+	    } #Close while loop of query2
+	    ?>
+            	<li><input type=button class="btn btn-primary" onClick="location.href='familyTree.php?id=<?php echo $identity ?>'" value='View Family Tree'></li><br>
+	    	<li><h3>Customer Calendar</h3></li>
+	     	<li><h3>Customer Events</h3></li>
+	    </ul>
+      </div>
+   </div>
+</div>
+<br>
+<footer class="container-fluid text-center">
+    <p>True Course Life © 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc. True Course Ministries, 
+	True Course Living, Learning, Leading; and True Course Life & Leadership Development are all registered trademarks</p>
+</footer>
+</body>
 </html>
 
 <?php endif; ?>
