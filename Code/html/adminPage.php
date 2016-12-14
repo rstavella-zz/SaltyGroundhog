@@ -63,6 +63,7 @@ else if( isset( $_SESSION['manager_id'])) : ?>
         <li><a href=""><img src="true.jpg" class="img-rounded" alt="Home" width="70" height="30"> </a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
+	  <li><a href="changeAdminPassword.php">Change Password</a></li>
         <li><a href="index.php"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
       </ul>
     </div>
@@ -88,36 +89,23 @@ else if( isset( $_SESSION['manager_id'])) : ?>
 	    while($row = pg_fetch_array($results)) {
 		$prof_id = $row['prof_id'];
             ?>
+	 <!-- Print all professionals and the organization they are a part of. This should correspond to the organization of the License Manager -->
                 <ul>
                     <li>Professional Name: <?php echo $row['first_name']?> <?php echo $row['last_name']?></li>
                     <li>Organization: <?php echo $row['organization']?></li>
-                    <li><input type="submit" class="btn btn-primary" name="submit" value="Delete"></li>
-                    <div class="clear"></div>                                                       
+                    <li><?php echo "<a href=\"deleteProfessional.php?id={$prof_id}\">Delete</a>";?></li>
+		    <div class="clear"></div>                                                       
                 </ul>
             <?php
             }
-	    if(isset($_POST['submit'])){
-		$query = pg_query("DELETE FROM clientprofessional where prof_id='$prof_id'");
-		$query1 = pg_query("DELETE FROM professionals where prof_id='$prof_id'");
-		if (!$query && !$query1) {
-			$errormessage = pg_last_error();
-			$message = "Error with Delete. Please check fields.";
-			echo "<script type='text/javascript'>alert('$message');</script>";
-			exit();
-		}else{
-			$message = "This professional was deleted.";
-			echo "<script type='text/javascript'>alert('$message');</script>";
-			header("Refresh:0");
-		}
-	    }
-            ?>
+	    ?>
 	  </form>
        </div><!-- Closes login-form -->
    </div><!-- Closes Main-section -->
 </div><!-- Closes Main -->
 <br>
 <footer class="container-fluid text-center">
-    <p>True Course Life © 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
+    <p>True Course Life &copy; 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
        True Course Ministries, True Course Living, Learning, Leading; and True Course Life & Leadership Development are all registered trademarks.</p>
 </footer>
 </body>

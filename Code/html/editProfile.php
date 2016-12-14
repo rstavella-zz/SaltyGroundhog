@@ -1,8 +1,20 @@
+<!--
+Credit to the Layout with the shaded Border
+Author: W3layouts
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+
+Code written by the Salty Groundhogs Team
+Senior Project
+True Course Website
+This page allows a professional to edit their profile
+-->
 
 <?php
-    error_reporting(-1); // display all faires
-        ini_set('display_errors', 1);  // ensure that faires will be seen
-        ini_set('display_startup_errors', 1); // display faires that didn't born
+#error_reporting(-1); // display all faires
+#ini_set('display_errors', 1);  // ensure that faires will be seen
+#ini_set('display_startup_errors', 1); // display faires that didn't born
 
 include('loginValidate.php');
 session_start();
@@ -45,11 +57,12 @@ $prof_id = $_SESSION['prof_id'];
        </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li><a href="home.php"><img src="true.jpg" class="img-rounded" alt="Home" width="70" height="30"> </a></li>
+        <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li><a href="clientPage.php">Clients</a></li>
         <li><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li class="active"><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -62,10 +75,6 @@ $prof_id = $_SESSION['prof_id'];
 
 <body>
 <?php
-     error_reporting(-1); // display all faires
-        ini_set('display_errors', 1);  // ensure that faires will be seen
-        ini_set('display_startup_errors', 1); // display faires that didn't born
-
 $conn_string = "host=10.10.7.159 port=5432 dbname=maindb user=postgres password=SaltyGroudhogs";
 $dbconn4 = pg_connect($conn_string);
 
@@ -76,17 +85,15 @@ $query = pg_query("SELECT p.prof_id, p.First_Name, p.Last_Name, p.Street_Address
                                                                p.phone_number, p.gender, p.email, p.bio
                                                                FROM professionals as p
                                                                WHERE p.prof_id = '$prof_id'");
-
-
-
 $results=pg_fetch_array($query);
 ?>
-                <!---header--->
-                <div class="header w3ls">
-                        <h1>Edit Professional Profile</h1>
-                </div>
-                <!---header--->
-                <!---main--->
+  <div class="header w3ls">
+         <h1>Edit Professional Profile</h1>
+  </div>
+      <!---Here we display all current information in the database about a professional
+	   A professional can now update any changed information and save those new values 
+	   into the database
+	-->
                         <div class="main">
                                 <div class="main-section agile">
                                         <div class="login-form">
@@ -99,14 +106,13 @@ $results=pg_fetch_array($query);
                                                                  <li class="text-info">Last Name: </li>
                                                                  <li><input type="text" name="last_name" value="<?php echo $results['last_name']?>"></li>
                                                                  <div class="clear"></div>
-
                                                          </ul>
                                                          <ul>
                                                                  <li class="text-info">Bio: </li>
-                                                                 <li><input type="textarea" name="bio" value="<?php echo $results['bio']?>"></li>
+                                                                 <li><textarea rows="7" cols="50" name="bio"><?php echo $results['bio']?></textarea></li>
                                                                  <div class="clear"></div>
                                                          </ul>
-                                                                                                                  <ul>
+                                                         <ul>
                                                                  <li class="text-info">Street Address: </li>
                                                                  <li><input type="text" name="street_address" value="<?php echo $results['street_address']; ?>"></li>
                                                                  <div class="clear"></div>
@@ -380,13 +386,13 @@ $results=pg_fetch_array($query);
                                                                  <div class="clear"></div>
 
                                                                  <li class="text-info">Zip Code: </li>
-                                                                 <li><input type="text" name="zipcode" value="<?php echo $results['zipcode'];?>"></li>
+                                                                 <li><input type="text" name="zipcode" maxlength="5" value="<?php echo $results['zipcode'];?>"></li>
                                                                  <div class="clear"></div>
 
                                                          </ul>
                                                          <ul>
                                                                  <li class="text-info">Phone Number: </li>
-                                                                 <li><input type="text" name="phone_number" value="<?php echo $results['phone_number'];?>"></li>
+                                                                 <li><input type="text" name="phone_number" maxlength="10" value="<?php echo $results['phone_number'];?>"></li>
                                                                  <div class="clear"></div>
                                                         </ul>
                                                         <ul>
@@ -434,6 +440,15 @@ $results=pg_fetch_array($query);
 	$phone_number=$_POST['phone_number'];
 	$gender=$_POST['gender'];
 	$bio=$_POST['bio'];
+	
+	#This strips input of any characters to stop attacks 
+	$first_name = preg_replace("/[^a-zA-Z0-9\s]/", "", $first_name);
+	$last_name = preg_replace("/[^a-zA-Z0-9\s]/", "", $last_name);
+	$street_address = preg_replace("/[^a-zA-Z0-9\s]/", "", $street_address);
+	$zipcode = preg_replace("/[^0-9\s]/", "",$zipcode);
+	$city = preg_replace("/[^a-zA-Z0-9\s]/", "", $city);
+	$phone_number = preg_replace("/[^0-9\s]/", "", $phone_number);
+	$bio = preg_replace("/[^a-zA-Z0-9\s]/", "", $bio);
 
 	$query1=pg_query("update professionals set first_name='$first_name', last_name='$last_name', street_address='$street_address', city='$city', state='$state', country='$country', phone_number='$phone_number', gender='$gender', bio='$bio'  where prof_id='$prof_id'");
 
@@ -444,7 +459,7 @@ $results=pg_fetch_array($query);
 
             exit();
         }else{
-            $message = "These values were updated into the database";
+            $message = "Successfully Updated Profile!!!";
             echo "<script type='text/javascript'>alert('$message'); document.location.href = 'myProfile.php';</script>";
         }
 }

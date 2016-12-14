@@ -18,15 +18,13 @@ This page allows a professional to view another professionals full bio
 #ini_set('display_startup_errors', 1); // display faires that didn't born
 
 #Verifies that a professional is logged in.
-#This page is only viewable if you have the proper crednetials and are logged in.     include('loginValidate.php');
-    session_start();
-    error_reporting(-1); // display all faires
-    ini_set('display_errors', 1);  // ensure that faires will be seen
-    ini_set('display_startup_errors', 1); // display faires that didn't born
-    if(!isset( $_SESSION['prof_id'])){
-       load('index.php');
-    }
-    else if( isset( $_SESSION['prof_id'])) : ?>
+#This page is only viewable if you have the proper crednetials and are logged in.     
+include('loginValidate.php');
+session_start();
+if(!isset( $_SESSION['prof_id'])){
+     load('index.php');
+}
+else if( isset( $_SESSION['prof_id'])) : ?>
 
 <html lang="en">
 <head>
@@ -59,11 +57,12 @@ This page allows a professional to view another professionals full bio
        </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li><a href="home.html"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
+        <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li><a href="clientPage.php">Clients</a></li>
         <li class="active"><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -84,6 +83,11 @@ This page allows a professional to view another professionals full bio
  #Pass in URL ID for query to show correct professional information
  $results = pg_query("SELECT * from professionals where prof_id = ' $identity '");
  while($row = pg_fetch_array($results)) {
+	#Changes phone number format for printing -- from 1231231234 to (123)-123-1234
+        $phone_number = $row['phone_number'];
+        $phone_number = '('.substr($phone_number, 0, 3).')-'.substr($phone_number, 3,3).'-'.substr($phone_number, 6,10);
+	#Checks to see what is loaded in database for the picture URL
+	#if it is the generic notUploaded then it will load the noProfile photo else load profile photo saved on database
 	 if ($row['prof_picture_url'] == "notUploaded"){
                       $prof_picture_url = "/uploads/noProfilePhoto.png";
                   } else {
@@ -91,7 +95,7 @@ This page allows a professional to view another professionals full bio
                  }
 ?>
   <h1 align="center"><?php echo $row['first_name']?> <?php echo $row['last_name']?></h1>
-  <!---main--->
+  <!---Here we are outputting all information about a professional that is saved in the database -->
   <div class="main">
     <div class="main-section agile">
        <div class="login-form">
@@ -116,7 +120,7 @@ This page allows a professional to view another professionals full bio
                <li><b>Phone Number</b></li>
          </ul>
          <ul>
-               <li><?php echo $row['phone_number']?></li>
+               <li><?php echo $phone_number?></li>
          </ul>
          <ul>
                <li><b>Gender</b></li>
@@ -138,7 +142,7 @@ This page allows a professional to view another professionals full bio
   </div>
 <br>
 <footer class="container-fluid text-center">
-    <p>True Course Life © 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Minisulies, Inc.
+    <p>True Course Life &copy; 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Minisulies, Inc.
        True Course Minisulies, True Course Living, Learning, Leading; and True Course Life & Leadership Development are all registered Trademarks.</p>
 </footer>
 </body>

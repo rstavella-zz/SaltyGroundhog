@@ -63,8 +63,9 @@ else if( isset( $_SESSION['prof_id'])) : ?>
         <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li class="active"><a href="clientPage.php">Clients</a></li>
         <li><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -75,6 +76,9 @@ else if( isset( $_SESSION['prof_id'])) : ?>
   </div>
 </nav>
 
+<!-- This is where we list all client information from the database.
+We access data from the Customers, customer_bios, education, job, hobby, and hobby_list machine 
+-->
 <body>                                                       
 <?php
     $connect = pg_connect("host=10.10.7.159 dbname=maindb user=postgres password=SaltyGroundhogs");
@@ -82,6 +86,11 @@ else if( isset( $_SESSION['prof_id'])) : ?>
     if (!$connect) {
         die(pg_error());
     }
+    $query0 = pg_query("SELECT cp.cust_id FROM customers as c, professionals as p, appointments as a, clientprofessional as cp WHERE p.prof_id = " . $_SESSION['prof_id'] . " AND cp.prof_id = " . $_SESSION['prof_id'] . " AND cp.cust_id= '$identity '");
+    if(pg_num_rows($query0) == 0){ 
+      load('home.php');  
+    } 
+    
     #Pass in admin ID that is associated with organization
     $results = pg_query("SELECT cu.Cust_ID, cu.First_Name, cu.Last_Name, cu.Active_Status, cu.Street_Address, cu.Zipcode, cu.state, cu.city, cu.country,
                          cu.home_phone, cu.custpic_url, cu.work_phone, cu.cell_phone, cu.gender, cu.martital_status, cu.email, cu.dob
@@ -90,11 +99,11 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 
     $results2 = pg_query("SELECT cu.Cust_ID, cb.fav_food, cb.fav_book, cb.pref_call_time, cb.self_awareness_practice  FROM Customers as cu, customer_bios as cb WHERE cu.Cust_ID = '$identity' and cu.Cust_ID = cb.Cust_ID");
 
-    $results3 = pg_query("SELECT cu.cust_id, e.school_name, e.degree, e.grad_year FROM customers as cu, education as e WHERE cu.Cust_ID = '$identity' AND cu.Cust_ID = e.Cust_ID");
+    $results3 = pg_query("SELECT cu.cust_id, e.education_id, e.school_name, e.degree, e.grad_year FROM customers as cu, education as e WHERE cu.Cust_ID = '$identity' AND cu.Cust_ID = e.Cust_ID");
 
-    $results4 = pg_query("SELECT cu.cust_id, j.job_status, j.income, j.job_title, j.employer FROM customers as cu,  jobs as j WHERE cu.Cust_ID = '$identity' AND cu.Cust_ID = j.Cust_ID");
+    $results4 = pg_query("SELECT cu.cust_id, j.job_id, j.job_status, j.income, j.job_title, j.employer FROM customers as cu,  jobs as j WHERE cu.Cust_ID = '$identity' AND cu.Cust_ID = j.Cust_ID");
 
-    $results5 = pg_query("SELECT cu.cust_id, hl.hobby_name, h.weekly_frequency FROM customers as cu, hobbies as h, hobbylist as hl WHERE cu.Cust_ID = '$identity' AND cu.Cust_ID = h.Cust_ID AND h.hobbies_id = hl.hobbies_id");
+    $results5 = pg_query("SELECT cu.cust_id, h.hobbies_id, hl.hobby_name, h.weekly_frequency FROM customers as cu, hobbies as h, hobbylist as hl WHERE cu.Cust_ID = '$identity' AND cu.Cust_ID = h.Cust_ID AND h.hobbies_id = hl.hobbies_id");
 
      while($row = pg_fetch_array($results)) {
 	 if ($row['custpic_url'] == "notUploaded"){
@@ -102,6 +111,17 @@ else if( isset( $_SESSION['prof_id'])) : ?>
          } else {
                 $custpic_url = $row['custpic_url'];
          }
+     
+	$home_phone = $row['home_phone'];
+	$home_phone = '('.substr($home_phone, 0, 3).')'.substr($home_phone, 3,3).'-'.substr($home_phone, 6,10);
+
+	$work_phone = $row['work_phone'];
+        $work_phone = '('.substr($work_phone, 0, 3).')'.substr($work_phone, 3,3).'-'.substr($work_phone, 6,10);
+	
+	$cell_phone = $row['cell_phone'];
+        $cell_phone = '('.substr($cell_phone, 0, 3).')'.substr($cell_phone, 3,3).'-'.substr($cell_phone, 6,10);
+
+
     ?>
     <div class="main">
       <div class="main-section agile">
@@ -130,13 +150,13 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 			<div class="clear"></div>
                </ul>
                <ul>
-                         <li><b>Home Phone: </b><?php echo $row['home_phone']?></li>
+                         <li><b>Home Phone: </b><?php echo $home_phone?></li>
 			 <div class="clear"></div>
 
-                         <li><b>Work Phone: </b><?php echo $row['work_phone']?></li>
+                         <li><b>Work Phone: </b><?php echo $work_phone?></li>
 			 <div class="clear"></div>
 
-                         <li><b>Mobile Phone: </b><?php echo $row['cell_phone']?></li>
+                         <li><b>Mobile Phone: </b><?php echo $cell_phone?></li>
 			 <div class="clear"></div>
                </ul>
                <ul>
@@ -176,6 +196,7 @@ else if( isset( $_SESSION['prof_id'])) : ?>
             } #Close while of Results2
 
          while($row = pg_fetch_array($results3)) {
+	 $education_id = $row['education_id'];
          ?>
              <ul>
                           <li><b>School Name: </b><?php echo $row['school_name']?></li>
@@ -186,11 +207,16 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 
                           <li><b>Graduation Year: </b><?php echo $row['grad_year']?></li>
 			  <div class="clear"></div>
+			
+			  <li><?php echo "<a href=\"deleteEducation.php?id={$education_id}\">Delete Education</a>";?></li>
+                          <div class="clear"></div>
+
              </ul>
          <?php
             } #Close while of results3
 
          while($row = pg_fetch_array($results4)) {
+	$job_id = $row['job_id'];
          ?>
             <ul>
                           <li><b>Job Status: </b><?php echo $row['job_status']?></li>
@@ -204,11 +230,16 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 
                           <li><b>Income: </b><?php echo $row['income']?></li>
 			  <div class="clear"></div>
+
+			  <li><?php echo "<a href=\"deleteJob.php?id={$job_id}\">Delete Job</a>";?></li>
+                          <div class="clear"></div>
+
            </ul>
          <?php
             } #Close while of results4
 
          while($row = pg_fetch_array($results5)) {
+	 $hobbies_id = $row['hobbies_id'];
          ?>
            <ul>
                           <li><b>Hobby Name: </b><?php echo $row['hobby_name']?></li>
@@ -217,7 +248,7 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                           <li><b>Hobby Frequency: </b><?php echo $row['weekly_frequency']?></li>
 			  <div class="clear"></div>
 
-			  <li><?php echo "<a href=\"delete.php?id={$identity}\">DELETE</a>";?></li>
+			  <li><?php echo "<a href=\"deleteHobby.php?id={$hobbies_id}\">Delete Hobby</a>";?></li>
 			  <div class="clear"></div>
            </ul>
      

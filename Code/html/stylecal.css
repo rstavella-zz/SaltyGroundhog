@@ -17,6 +17,11 @@ a {
 	text-decoration: none;
 }
 
+td a {
+    display:block;
+    width:100%;
+}
+
 h2 {
 	font-size: 2em;
 	line-height: 1.25em;
@@ -80,6 +85,10 @@ table {
 
 .calendar .prev-month,
 .calendar .next-month {
+	color: #7c8a95;
+}
+
+.calendar .current-month {
 	color: #00addf;
 }
 
@@ -98,8 +107,38 @@ table {
 	position: relative;
 }
 
+.click a {
+  display: block;
+}
+
 .event:after {
-	background: black;
+	background: #00addf;
+	border-radius: 50%;
+	bottom: .5em;
+	display: block;
+	content: '';
+	height: .5em;
+	left: 50%;
+	margin: -.25em 0 0 -.25em;
+	position: absolute;
+	width: .5em;
+}
+
+.next-month.event:after {
+	background: #7c8a95;
+	border-radius: 50%;
+	bottom: .5em;
+	display: block;
+	content: '';
+	height: .5em;
+	left: 50%;
+	margin: -.25em 0 0 -.25em;
+	position: absolute;
+	width: .5em;
+}
+
+.prev-month.event:after {
+	background: #7c8a95;
 	border-radius: 50%;
 	bottom: .5em;
 	display: block;
@@ -124,6 +163,8 @@ table {
 	font-size: .75em;
 	line-height: 2em;
 	margin: -1em;
+	margin-left: -8em;
+	margin-right: -8em;
 	position: absolute;
 	top: 50%;
 	width: 2em;
@@ -136,9 +177,9 @@ table {
 }
 
 .btn-prev {
-	left: 6em;
+	left: 9em;
 }
 
 .btn-next {
-	right: 6em;
+	right: 9em;
 }

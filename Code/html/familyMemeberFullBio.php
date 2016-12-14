@@ -21,9 +21,6 @@ This page allows a professional to view a family memebers complete bio
 #This page is only viewable if you have the proper crednetials and are logged in. 
 include('loginValidate.php');
 session_start();
-error_reporting(-1); // display all faires
-ini_set('display_errors', 1);  // ensure that faires will be seen
-ini_set('display_startup_errors', 1); // display faires that didn't born
 if(!isset( $_SESSION['prof_id'])){
   load('index.php');
 }
@@ -63,8 +60,9 @@ else if( isset( $_SESSION['prof_id'])) : ?>
         <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li class="active"><a href="clientPage.php">Clients</a></li>
         <li><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -82,14 +80,25 @@ else if( isset( $_SESSION['prof_id'])) : ?>
     if (!$connect) {
         die(pg_error());
     }
-    #Pass in admin ID that is associated with organization
+    #Get all information in the database related to ID passed through URL
     $results = pg_query("SELECT cu.Cust_ID, cu.First_Name, cu.Last_Name, cu.relation, cu.Street_Address, cu.Zipcode, cu.state, cu.city, cu.country,
-                                cu.home_phone, cu.work_phone, cu.cell_phone, cu.gender,cu.dob
+                                cu.home_phone, cu.work_phone, cu.cell_phone, cu.dob
                          FROM Customers as cu
                          WHERE cu.Cust_ID = '$identity'");
      $results2 = pg_query("SELECT cust_id, first_name, last_name, relation FROM customers  WHERE custr_id= '$identity '");
      while($row = pg_fetch_array($results)) {
+	#Change phone number formats for printing
+	#Changing them from 1231231234 (123)-123-1234
+        $home_phone = $row['home_phone'];
+        $home_phone = '('.substr($home_phone, 0, 3).')'.substr($home_phone, 3,3).'-'.substr($home_phone, 6,10);
+
+        $work_phone = $row['work_phone'];
+        $work_phone = '('.substr($work_phone, 0, 3).')'.substr($work_phone, 3,3).'-'.substr($work_phone, 6,10);
+
+        $cell_phone = $row['cell_phone'];
+        $cell_phone = '('.substr($cell_phone, 0, 3).')'.substr($cell_phone, 3,3).'-'.substr($cell_phone, 6,10);
     ?>
+	<!-- Here we are printing all information about a family memeber onto the page -->
 		<div class="main">
                         <div class="main-section agile">
                                  <div class="login-form">
@@ -110,15 +119,11 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 				<div class="clear"></div>
                         </ul>
                         <ul>
-                                <li><b>Home Phone: </b><?php echo $row['home_phone']?></li>
+                                <li><b>Home Phone: </b><?php echo $home_phone?></li>
 				<div class="clear"></div>
-                                <li><b>Work Phone: </b><?php echo $row['work_phone']?></li>
+                                <li><b>Work Phone: </b><?php echo $work_phone?></li>
 				<div class="clear"></div>
-                                <li><b>Mobile Phone: </b><?php echo $row['cell_phone']?></li>
-				<div class="clear"></div>
-                        </ul>
-                        <ul>
-                                <li><b>Gender: </b><?php echo $row['gender']?></li>
+                                <li><b>Mobile Phone: </b><?php echo $cell_phone?></li>
 				<div class="clear"></div>
                         </ul>
                         <ul>
@@ -127,16 +132,22 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                         </ul>
 		<?php
 		}
+		   #This is to show any family memebers related to you through the database
+		   #it is a seperate loop since you are dealing with separate information even though it is all from the same table
 	            while($row2 = pg_fetch_array($results2)) {	
+			 $first_name=$row2['first_name'];
+                   	 $last_name=$row2['last_name'];
+                   	 $familyId=$row2['cust_id'];
+		
 		?>
-			<ul>
-			<li><font size="4"><?php echo "<a href=\" familyMemeberFullBio.php?id={$familyId}\"> $first_name $last_name </a>";?> : <?php echo $row2['relation']?></font></li><br>
+			<ul><!-- link to family members bio -->
+			<li><font size="4"><?php echo "<a href=\" familyMemeberFullBio.php?id={$familyId}\"> $first_name $last_name </a>";?> : <?php echo $row2['relation']?></font><font size="2"><?php echo "<a href=\"deleteFamMem.php?id={$familyId}\">Remove</a>";?></font></li><br>
 			</ul>
           <?php  
 	   }
             ?>
 			 <ul>
-                                <li><input type=button class="btn btn-primary" onClick="location.href='newFamilyMember.php?id=<?php echo $identity ?>'" value='Add Family Member'></li>
+                                <li><input type=button class="btn btn-primary" onClick="location.href='newFamilyFamilyMember.php?id=<?php echo $identity ?>'" value='Add Family Member'></li>
                           </ul>
 
 			  <ul>

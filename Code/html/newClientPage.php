@@ -58,11 +58,12 @@ else if( isset( $_SESSION['prof_id'])) : ?>
        </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li><a href="home.php"><img src="true.jpg" class="img-rounded" alt="Home" width="70" height="30"> </a></li>
+        <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li><a href="clientPage.php">Clients</a></li>
         <li><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
         <li class="active"><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -74,6 +75,7 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 </nav>
 
 	<body>
+	<!-- This page displays the create profile page -->
                 <div class="header w3ls">
                         <h1>Create Client Profile</h1>
                 </div>
@@ -371,15 +373,15 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                          </ul>
                                                          <ul>
                                                                  <li class="text-info">Home Phone *</li>
-                                                                 <li><input type="text" name="home_phone" maxlength="10" placeholder="Home Phone" required></li>
+                                                                 <li><input type="text" name="home_phone" maxlength="10" placeholder="Home Phone EX: 1234567890" required></li>
                                                                  <div class="clear"></div>
 
                                                                  <li class="text-info">Cell Phone *</li>
-                                                                 <li><input type="text" name="cell_phone" maxlength="10" placeholder="Cell Phone" required></li>
+                                                                 <li><input type="text" name="cell_phone" maxlength="10" placeholder="Cell Phone EX: 1234567890" required></li>
                                                                  <div class="clear"></div>
 
                                                                  <li class="text-info">Work Phone *</li>
-                                                                 <li><input type="text" name="work_phone" maxlength="10" placeholder="Work Phone" required></li>
+                                                                 <li><input type="text" name="work_phone" maxlength="10" placeholder="Work Phone EX: 1234567890" required></li>
                                                                  <div class="clear"></div>
                                                          </ul>
                                                          <ul>
@@ -402,10 +404,11 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                   </select></li>
                                                                  <div class="clear"></div>
                                                          </ul>
-                                                         <ul>
-                                                                 <li class="text-info">Month *</li>
-                                                                 <li class="se"> <select class="form-dropdown" id="dob_month" name="dob_month" required>
-                                                                        <option value="" selected="selected"></option>
+							 <ul>
+							 <li class="text-info">Birthday *</li>
+                                                            <li class="se"> 
+								<select class="form-dropdown" id="dob_month" name="dob_month" required>
+									<option value="">Month</option>
                                                                         <option value="01">January</option>
                                                                         <option value="02">Febuary</option>
                                                                         <option value="03">March</option>
@@ -418,12 +421,9 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                         <option value="10">October</option>
                                                                         <option value="11">November</option>
                                                                         <option value="12">December</option>
-								 </select></li>
-                                                                 <div class="clear"></div>
-
-                                                                 <li class="text-info">Day *</li> <li class="se">
+                                                                 </select>
                                                                  <select class="form-dropdown" id="dob_day" name="dob_day" required>
-                                                                        <option value="" selected="selected"></option>
+                                                                        <option value="">Day</option>
                                                                         <option value="1">1</option>
                                                                         <option value="2">2</option>
                                                                         <option value="3">3</option>
@@ -455,12 +455,9 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                         <option value="29">29</option>
                                                                         <option value="30">30</option>
                                                                         <option value="31">31</option>
-                                                                 </select></li>
-                                                                 <div class="clear"></div>
-
-                                                                  <li class="text-info">Year *</li> <li class="se">
+                                                                 </select>
                                                                  <select class="form-dropdown" id="dob_year" name="dob_year" required>
-                                                                        <option value="" selected="selected"></option>
+                                                                        <option value="">Year</option>
                                                                         <option value="2016">2016</option>
                                                                         <option value="2015">2015</option>
                                                                         <option value="2014">2014</option>
@@ -531,11 +528,13 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                         <option value="1949">1949</option>
                                                                         <option value="1948">1948</option>
                                                                         <option value="1947">1947</option>
+                                                                        <option value="1946">1946</option> <option value="1945">1945</option> <option value="1944">1944</option> <option value="1943">1943</option> <option value="1942">1942</option> <option value="1941">1941</option> <option value="1940">1940</option> <option value="1939">1939</option> <option value="1938">1938</option> <option value="1937">1937</option> <option value="1936">1936</option> <option value="1935">1935</option> <option value="1934">1934</option> <option value="1933">1933</option> <option value="1932">1932</option> <option value="1931">1931</option> <option value="1930">1930</option> <option value="1929">1929</option> <option value="1928">1928</option> <option value="1927">1927</option> <option value="1926">1926</option> <option value="1925">1925</option> <option value="1924">1924</option> <option value="1923">1923</option> <option value="1922">1922</option> <option value="1921">1921</option> <option value="1920">1920</option> <option value="1919">1919</option> <option value="1918">1918</option> <option value="1917">1917</option> <option value="1916">1916</option> <option value="1915">1915</option>
                                                                   </select></li>
                                                                  <div class="clear"></div>
 
                                                          </ul>
-                                                         <ul>
+
+							  <ul>
                                                                   <li class="text-info">Prefered Call Time *</li> <li class="se">
                                                                   <select class="form-dropdown" id="pref_call_time" name="pref_call_time" required>
                                                                         <option value="" selected="selected"></option>
@@ -611,6 +610,19 @@ else if( isset( $_SESSION['prof_id'])) : ?>
         $custr_id = "00";
         $relation = "null";
 	$custpic_url = "notUploaded";
+
+	#This strips input of any characters to stop attacks 
+	$first_name = preg_replace("/[^a-zA-Z0-9\s]/", "", $first_name);
+	$last_name = preg_replace("/[^a-zA-Z0-9\s]/", "", $last_name);
+	$street_address = preg_replace("/[^a-zA-Z0-9\s]/", "", $street_address);
+	$zipcode = preg_replace("/[^0-9\s]/", "",$zipcode);
+	$city = preg_replace("/[^a-zA-Z0-9\s]/", "", $city);
+	$home_phone = preg_replace("/[^0-9\s]/","", $home_phone);
+	$work_phone = preg_replace("/[^0-9\s]/","", $work_phone);
+	$cell_phone = preg_replace("/[^0-9\s]/","", $cell_phone);
+	$self_awareness_practice = preg_replace("/[^a-zA-Z0-9\s]/", "", $self_awareness_practice);
+	$email = preg_replace("/[^@.a-zA-Z0-9\s]/", "", $email);	
+
        	$query = "INSERT INTO customers VALUES (nextval('customers_cust_id_seq'), '" . $custr_id . "','" . $relation ."', '" . $first_name . "','" . $last_name . "',
                         '" . $active_status . "', '" . $street_address . "','" . $zipcode . "', '" . $state . "', '" . $city . "', '" . $country . "', '" . $home_phone . "',
                         '" . $work_phone . "', '" .$cell_phone . "', '" . $gender . "', '" . $martital_status . "', '" . $email . "','" . $dob . "', '" . $custpic_url . "')";
@@ -629,7 +641,7 @@ else if( isset( $_SESSION['prof_id'])) : ?>
              echo "<script type='text/javascript'>alert('$message');</script>";
             exit();
         }else{
-            $message = "These values were inserted into the database";
+            $message = "New Client Successfully Added!!";
             echo "<script type='text/javascript'>alert('$message');</script>";
         }
      }

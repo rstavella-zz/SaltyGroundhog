@@ -1,3 +1,8 @@
+<!--
+Code written by the Salty Groundhogs team
+True Course Website
+This page validates the login to the True Course Website
+-->
 <?php
 
 function load($page = 'index.php') {

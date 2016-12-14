@@ -86,11 +86,12 @@ body {
        </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li><a href="home.php"><img src="true.jpg" class="img-rounded" alt="Home" width="70" height="30"> </a></li>
+        <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li><a href="clientPage.php">Clients</a></li>
         <li><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -100,7 +101,7 @@ body {
     </div>
   </div>
 </nav>
-
+<!-- Print output and email output for changing email -->
 <body>
 <div id="wrapper">
   <div id="header">
@@ -144,6 +145,9 @@ body {
            $prof_id = $_SESSION['prof_id'];
            if(isset($_POST['newEmail'])){ $newEmail = $_POST['newEmail']; }
 	   if(isset($_POST['comEmail'])){ $comEmail = $_POST['comEmail']; }
+	
+	   $newEmail = preg_replace("/[^@.a-zA-Z0-9\s]/", "", $newEmail);
+	   $comEmail = preg_replace("/[^@.a-zA-Z0-9\s]/", "", $comEmail);	
 		
            if($newEmail == $comEmail){
                 $query = pg_query("UPDATE professionals SET email = '$newEmail' WHERE prof_id = ' $prof_id '");

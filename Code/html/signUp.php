@@ -51,6 +51,7 @@ This page is to create a new Professional within the system
 
 
 <body>
+<!-- This displays the screen that allows you to create an account for the website -->
                 <div class="header w3ls">
                         <h1>Sign-Up</h1>
                 </div>
@@ -69,7 +70,7 @@ This page is to create a new Professional within the system
                                                          </ul>   
                                                          <ul>
                                                                  <li class="text-info">Phone Number *</li>
-                                                                 <li><input type="text" name="phone_number" placeholder="Phone Number" required></li>
+                                                                 <li><input type="text" name="phone_number" maxlength="10" placeholder="Phone Number EX: 1234567890" required></li>
                                                                  <div class="clear"></div>
                                                          </ul>
                                                          <ul>
@@ -87,8 +88,13 @@ This page is to create a new Professional within the system
                                                                  <div class="clear"></div>
 																 
 								 <li class="text-info">Password *</li>
-                                                                 <li><input type="password" name="prof_password" placeholder="Password" required></li>
+                                                                 <li><input type="password" name="password" placeholder="Password" required></li>
                                                                  <div class="clear"></div>
+								
+								 <li class="text-info">Confirm Password *</li>
+                                                                 <li><input type="password" name="confPass" placeholder="Confirm Password" required></li>
+                                                                 <div class="clear"></div>
+
 								
 								 <li class="text-info">License Key *</li>
                                                                  <li><input type="text" name="license_key" placeholder="License Key" required></li>
@@ -104,14 +110,14 @@ This page is to create a new Professional within the system
                         </div>
                         <br>
 <footer class="container-fluid text-center">
-    <p>True Course Life © 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
+    <p>True Course Life &copy; 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
        True Course Ministries, True Course Living, Learning, Leading; and True Course Life & Leadership Development are all registered trademarks. </p>
 </footer>
 
 <?php
-  #error_reporting(-1); // display all faires
-  #ini_set('display_errors', 1);  // ensure that faires will be seen
-  #ini_set('display_startup_errors', 1); // display faires that didn't born
+ #error_reporting(-1); // display all faires
+ #ini_set('display_errors', 1);  // ensure that faires will be seen
+ #ini_set('display_startup_errors', 1); // display faires that didn't born
 
   if(isset($_POST['submit'])){
 
@@ -123,38 +129,61 @@ This page is to create a new Professional within the system
         if(isset($_POST['phone_number'])){ $phone_number = $_POST['phone_number']; }
         if(isset($_POST['email'])){ $email = $_POST['email']; }
         if(isset($_POST['gender'])){ $gender = $_POST['gender']; }
-        if(isset($_POST['prof_password'])){ $prof_password = password_hash($_POST['prof_password'], PASSWORD_DEFAULT); }
 	if(isset($_POST['license_key'])){ $license_key = $_POST['license_key']; }
-	
-	$street_address = "NA"; 
-	$city = "NA";      
-	$zipcode = "0";        
-	$state = "0";          
-	$country = "NA";
-	$bio = "NA";         
-	$prof_picture_url = "notUploaded";
-		
-	$licenseQuery = pg_query("SELECT exists (SELECT 1 FROM licenses WHERE license_key =  '$license_key')");
-               	if($licenseQuery){
-                       	$query = "INSERT INTO professionals VALUES (nextval('professionals_prof_id_seq'), '" . $license_key . "','" . $email ."', '" . $prof_password . "',
-					'" . $first_name . "','" . $last_name . "', '" . $gender . "', '" . $bio . "','" . $street_address . "', '" . $city . "', '" . $zipcode . "',
-					 '" . $state . "','" . $country . "', '" .$phone_number . "', '" . $prof_picture_url . "')";
-               		$result = pg_query($dbconn4, $query);
+	if(isset($_POST['password'])){ $newPass = $_POST['password']; }
+        if(isset($_POST['confPass'])){ $comPass = $_POST['confPass']; }
 
-       			if (!$result) {
-       				$errormessage = pg_last_error();
-       				$message = "Error with entry. Please check fields.";
+	#This strips input of any characters to stop attacks 
+	$first_name = preg_replace("/[^a-zA-Z0-9\s]/", "", $first_name);
+	$last_name = preg_replace("/[^a-zA-Z0-9\s]/", "", $last_name);
+	$phone_number = preg_replace("/[^0-9\s]/", "", $phone_number);
+	$license_key = preg_replace("/[^a-zA-Z0-9\s]/", "", $license_key);
+	$email = preg_replace("/[^@.a-zA-Z0-9\s]/", "", $email);
+	
+
+	$street_address = "Not Entered"; 
+	$city = "Not Entered";      
+	$zipcode = "12345";        
+	$state = "Not Entered";          
+	$country = "Not Entered";
+	$bio = "Not Entered";         
+	$prof_picture_url = "notUploaded";
+	
+	if($newPass === $comPass) {
+ 		   $prof_passwordORG = $newPass; 
+		   $prof_password = password_hash($newPass, PASSWORD_DEFAULT);
+  
+		   if (!preg_match('/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,16}$/', $prof_passwordORG)){
+            		$message = "Error. Password must be at least 8 characters, no more than 16 characters, and must include at least one upper case letter, 
+					one lower case letter, and one numeric digit.";
+                        echo "<script type='text/javascript'>alert('$message');</script>";
+  		   } else {	
+  			$licenseQuery = pg_query("SELECT exists (SELECT 1 FROM licenses WHERE license_key =  '$license_key')");
+                 	if($licenseQuery){
+                         	$query = "INSERT INTO professionals VALUES (nextval('professionals_prof_id_seq'), '" . $license_key . "','" . $email ."', '" . $prof_password . "',
+  					'" . $first_name . "','" . $last_name . "', '" . $gender . "', '" . $bio . "','" . $street_address . "', '" . $city . "', '" . $zipcode . "',
+  					 '" . $state . "','" . $country . "', '" .$phone_number . "', '" . $prof_picture_url . "')";
+                 		$result = pg_query($dbconn4, $query);
+
+       				if (!$result) {
+       					$errormessage = pg_last_error();
+       					$message = "Error with entry. Please check fields.";
+       					echo "<script type='text/javascript'>alert('$message');</script>";
+       				
+       				}else{
+       					$message = "Welcome to True Course! Please Log in!";
+       					echo "<script type='text/javascript'>alert('$message'); document.location.href = 'index.php';</script>";
+       				}
+               		}else{
+                       		$message = "Error: License Key Not Found";
        				echo "<script type='text/javascript'>alert('$message');</script>";
-       				exit();
-       			}else{
-       				$message = "Welcome to True Course! Please Log in!";
-       				echo "<script type='text/javascript'>alert('$message'); document.location.href = 'index.php';</script>";
-       			}
-               	}else{
-                       	$message = "Error: License Key Not Found";
-       			echo "<script type='text/javascript'>alert('$message');</script>";
-               	}
-  }
+               		}
+      		}            
+  	}else{
+	   $message = "Error: Passwords do not match!";
+           echo "<script type='text/javascript'>alert('$message');</script>";
+	}
+    }
   pg_close();
 ?>
 

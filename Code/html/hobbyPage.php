@@ -29,7 +29,7 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 <!DOCTYPE HTML>
 <html>
 <head>
- <title>Create Client Profile</title>
+ <title>Add Hobby</title>
   <link href="style.css" rel="stylesheet" type="text/css" media="all"/>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -85,11 +85,12 @@ body {
        </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li><a href="home.php"><img src="true.jpg" class="img-rounded" alt="Home" width="70" height="30"> </a></li>
+        <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li class="active"><a href="clientPage.php">Clients</a></li>
         <li><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -143,7 +144,7 @@ body {
    </div>
   <br>
   <div id="footer">
-      <p>True Course Life © 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
+      <p>True Course Life &copy; 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
          True Course Ministries, True Course Living, Learning, Leading; and True Course Life & Leadership Development are all registered trademarks. </p>
   </div><!-- Footer -->
 </div><!-- Wrapper -->
@@ -154,10 +155,16 @@ body {
         $conn_string = "host=10.10.7.159 port=5432 dbname=maindb user=postgres password=SaltyGroudhogs";
         $dbconn4 = pg_connect($conn_string);
 	$identity = $_GET['id'];
+     $query0 = pg_query("SELECT cp.cust_id FROM customers as c, professionals as p, appointments as a, clientprofessional as cp WHERE p.prof_id = " . $_SESSION['prof_id'] . " AND cp.prof_id = " . $_SESSION['prof_id'] . " AND cp.cust_id= '$identity '");
+    if(pg_num_rows($query0) == 0){ 
+      load('home.php');  
+    } 
 
         if(isset($_POST['hobby_name'])){ $hobby_name = $_POST['hobby_name']; }
         if(isset($_POST['weekly_frequency'])){ $weekly_frequency = $_POST['weekly_frequency']; }
-
+	#This strips input of any characters to stop attacks 
+	$hobby_name = preg_replace("/[^a-zA-Z0-9\s]/", "", $hobby_name);
+	
 	$query2 = "INSERT INTO hobbylist (hobbies_id, hobby_name) VALUES (nextval('hobbies_hobbies_id_seq'), '" . $hobby_name . "')";
         $query1 = "INSERT INTO hobbies (hobbies_id, cust_id, weekly_frequency) VALUES (currval('hobbies_hobbies_id_seq'), '" . $identity . "', '" . $weekly_frequency . "')";
         
@@ -171,7 +178,7 @@ body {
              echo "<script type='text/javascript'>alert('$message');</script>";
             exit();
         }else{
-            $message = "These values were inserted into the database";
+            $message = "Hobby Successfully Added!!";
             echo "<script type='text/javascript'>alert('$message'); document.location.href = 'customerFullBio.php?id=$identity';</script>";
         }
      }

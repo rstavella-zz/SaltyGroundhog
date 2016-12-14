@@ -1,3 +1,9 @@
+<!--
+This code was written by the Salty Groundhogs Team
+True Course Website
+This is the logout code to end a professionals session
+-->
+
 <?php 
 	error_reporting(-1); // display all faires
 	ini_set('display_errors', 1);  // ensure that faires will be seen

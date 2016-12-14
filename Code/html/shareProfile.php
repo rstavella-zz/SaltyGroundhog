@@ -21,9 +21,6 @@ This page allows a professional to share a client profile with another professio
 #This page is only viewable if you have the proper crednetials and are logged in. 
 include('loginValidate.php');
 session_start();
-error_reporting(-1); // display all faires
-ini_set('display_errors', 1);  // ensure that faires will be seen
-ini_set('display_startup_errors', 1); // display faires that didn't born
 if(!isset( $_SESSION['prof_id'])){
   load('index.php');
 }
@@ -34,13 +31,11 @@ else if( isset( $_SESSION['prof_id'])) : ?>
  <title>Share Customer Profile</title>
   <link href="style.css" rel="stylesheet" type="text/css" media="all"/>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <!--web-fonts-->
   <link href='//fonts.googleapis.com/css?family=Ubuntu:400,300,300italic,400italic,500,500italic,700,700italic' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <!--web-fonts-->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -49,6 +44,7 @@ else if( isset( $_SESSION['prof_id'])) : ?>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
 </head>
+
 <!-- Sends footer to bottom of screen when content is too small -->
 <style>
 html,
@@ -96,8 +92,9 @@ body {
         <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li class="active"><a href="clientPage.php">Clients</a></li>
         <li><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -109,6 +106,9 @@ body {
 </nav>
 
 <body>
+<!-- A drop down will be filled with all professional names. A professional can chose which professional to share a clients profile with.
+This will add that new professional ID linked to the cust_id in the clientsprofessional table
+-->
 	<div id="wrapper">		
 		<div id="header">
 			<center><h1>Share Client Profile</h1></center>
@@ -122,10 +122,10 @@ body {
 					<?php
 						$conn_string = "host=10.10.7.159 port=5432 dbname=maindb user=postgres password=SaltyGroudhogs";
 						$dbconn4 = pg_connect($conn_string);
-
-						$sql = "SELECT prof_id, first_name, last_name FROM professionals";
+						$prof_id = $_SESSION['prof_id'];
+						$sql = "SELECT prof_id, first_name, last_name FROM professionals where prof_id != $prof_id";
 						$result = pg_query($sql);
-
+						#Populate dropdown with all other professionals within the database from query above 
 						echo "Choose Professional To share profile with: <select name='select_catalog' id='select_catalog'>";
 						while ($row = pg_fetch_array($result)) {
 							$name = $row["first_name"] . $row["last_name"];
@@ -154,6 +154,7 @@ body {
      if(isset($_POST['submit'])){
         $cust_id = $_GET['id'];
         $select_catalog = $_POST['select_catalog'];
+	#Insert new client/professional relationship to the database
         $query = "INSERT INTO clientprofessional (prof_id, cust_id) VALUES ('" . $select_catalog . "','" . $cust_id ."')";
         $result = pg_query($dbconn4, $query);
         if (!$result) {

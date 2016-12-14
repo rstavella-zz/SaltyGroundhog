@@ -46,9 +46,31 @@ else if( isset( $_SESSION['prof_id'])) : ?>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
 </head>
+
 <style>
-footer {
-        height:140px;
+html,
+body {
+        margin:0;
+        padding:0;
+        height:100%;
+}
+#wrapper {
+        min-height:100%;
+        position:relative;
+}
+#content {
+        padding-bottom:100px; /* Height of the footer element */
+}
+#footer {
+        background:#555;
+        color: white;
+        font-size: 10px;
+        padding: 15px;
+        width:100%;
+        height:110px;
+        position:absolute;
+        bottom:0;
+        left:0;
 }
 </style>
 
@@ -66,8 +88,9 @@ footer {
         <li><a href="home.php"><img src="true.jpg" class="img-rounded" alt="Home" width="70" height="30"> </a></li>
         <li class="active"><a href="clientPage.php">Clients</a></li>
         <li><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
+	<li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -89,18 +112,18 @@ footer {
                       <div class="login-form">
                            <form action="" method="post">
                                        <ul>
-                                           <li class="text-info">Employer </li>
-                                           <li><input type="text" name="employer" placeholder="Employer"></li>
+                                           <li class="text-info">Employer *</li>
+                                           <li><input type="text" name="employer" placeholder="Employer" required></li>
                                            <div class="clear"></div>
                                        </ul>
                                        <ul>
-                                           <li class="text-info">Job Title </li>
-                                           <li><input type="text" name="job_title" placeholder="Job Title"></li>
+                                           <li class="text-info">Job Title *</li>
+                                           <li><input type="text" name="job_title" placeholder="Job Title"required></li>
                                            <div class="clear"></div>
                                        </ul>
                                        <ul>
-                                            <li class="text-info">Income</li>
-                                            <li class="se"><select class="form-dropdown" id="income" name="income">
+                                            <li class="text-info">Income *</li>
+                                            <li class="se"><select class="form-dropdown" id="income" name="income" required>
                                             	<option value="" selected="selected"></option>
                                         	<option value="$0" >$0.00</option>
                                 	        <option value="$20,000 - $39,999" >$20,000 - $39,999</option>
@@ -111,8 +134,8 @@ footer {
                                              <div class="clear"></div>
                                         </ul>
                                         <ul>
-                                             <li class="text-info">Job Status</li>
-                                             <li class="se"><select class="form-dropdown" id="job_status" name="job_status">
+                                             <li class="text-info">Job Status *</li>
+                                             <li class="se"><select class="form-dropdown" id="job_status" name="job_status" required>
                                                    <option value="" selected="selected"></option>
                                                    <option value="Unemployed" >Unemployed</option>
                                                    <option value="Employed" >Employed</option>
@@ -142,11 +165,18 @@ footer {
         $dbconn4 = pg_connect($conn_string);
 
         $identity = $_GET['id'];
-
+        $query0 = pg_query("SELECT cp.cust_id FROM customers as c, professionals as p, appointments as a, clientprofessional as cp WHERE p.prof_id = " . $_SESSION['prof_id'] . " AND cp.prof_id = " . $_SESSION['prof_id'] . " AND cp.cust_id= '$identity '");
+        if(pg_num_rows($query0) == 0){ 
+          load('home.php');  
+        }   
         if(isset($_POST['employer'])){ $employer = $_POST['employer']; }
         if(isset($_POST['job_title'])){ $job_title = $_POST['job_title']; }
         if(isset($_POST['income'])){ $income = $_POST['income'];  }
         if(isset($_POST['job_status'])){ $job_status = $_POST['job_status']; }
+
+	#This strips input of any characters to stop attacks 
+	$employer = preg_replace("/[^a-zA-Z0-9\s]/", "", $employer);
+	$job_title = preg_replace("/[^a-zA-Z0-9\s]/", "", $job_title);
 
         $query1 = "INSERT INTO jobs (job_id, cust_id, job_status, income, job_title, employer) VALUES (nextval('jobs_job_id_seq'), '" . $identity . "','" . $job_status . "',
                 '" . $income . "','" . $job_title . "','" . $employer . "')";
@@ -159,7 +189,7 @@ footer {
              echo "<script type='text/javascript'>alert('$message');</script>";
             exit();
         }else{
-            $message = "These values were inserted into the database";
+            $message = "Job Successfully Added!!";
             echo "<script type='text/javascript'>alert('$message'); document.location.href = 'customerFullBio.php?id=$identity';</script>";
         }
      }

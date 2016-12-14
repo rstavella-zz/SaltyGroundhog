@@ -61,9 +61,10 @@ else if( isset( $_SESSION['prof_id'])) : ?>
       <ul class="nav navbar-nav">
         <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li class="active"><a href="clientPage.php">Clients</a></li>
-	<li><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
+        <li><a href="professionalPage.php">Professionals</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -84,9 +85,12 @@ else if( isset( $_SESSION['prof_id'])) : ?>
             if (!$connect) {
                 die(pg_error());
             }
-	    
+            $query0 = pg_query("SELECT cp.cust_id FROM customers as c, professionals as p, appointments as a, clientprofessional as cp WHERE p.prof_id = " . $_SESSION['prof_id'] . " AND cp.prof_id = " . $_SESSION['prof_id'] . " AND cp.cust_id= '$identity '");
+            if(pg_num_rows($query0) == 0){ 
+              load('home.php');  
+            } 
             $query1 = pg_query("SELECT *  FROM customers WHERE cust_id = ' $identity '");	    
-	    $query2 = pg_query("SELECT cust_id, first_name, last_name, relation FROM customers  WHERE custr_id= '$identity '");
+	          $query2 = pg_query("SELECT cust_id, first_name, last_name, relation FROM customers  WHERE custr_id= '$identity '");
             while($row = pg_fetch_array($query1)) {
 	  	  if ($row['custpic_url'] == "notUploaded"){
                       $custpic_url = "/uploads/noProfilePhoto.png";
@@ -111,21 +115,135 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 		   $last_name=$row2['last_name'];
 		   $familyId=$row2['cust_id'];
 	    ?>
-	           <li><font size="4"><?php echo "<a href=\" familyMemeberFullBio.php?id={$familyId}\"> $first_name $last_name </a>";?> : <?php echo $row2['relation']?></font></li><br>
+	           <li><font size="4"><?php echo "<a href=\" familyMemeberFullBio.php?id={$familyId}\"> $first_name $last_name </a>";?> : <?php echo $row2['relation']?></font><font size="2"><?php echo "<a href=\"deleteFamMem.php?id={$familyId}\">Remove</a>";?></font></li><br>
+                      
+
 	    <?php
 	    } #Close while loop of query2
 	    ?>
             	<li><input type=button class="btn btn-primary" onClick="location.href='familyTree.php?id=<?php echo $identity ?>'" value='View Family Tree'></li><br>
-	    	<li><h3>Customer Calendar</h3></li>
-	     	<li><h3>Customer Events</h3></li>
+        <li><h3><u>Client Appointments</u></h3></li>
+          <?php
+            $results = pg_query("SELECT a.appt_id, c.first_name, c.last_name, a.date, a.time, a.reoccuring_int FROM customers as c, professionals as p, appointments as a WHERE p.prof_id = " . $_SESSION['prof_id'] . " AND c.cust_id = a.cust_id AND c.cust_id = " . $identity . " ORDER BY a.date ASC, a.time ASC");
+              if(pg_num_rows($results) == 0){ 
+                echo "No Appointments Scheduled For This Client";  
+              } 
+              while($row = pg_fetch_array($results)) {
+                $ymddate = $row["date"];
+                $ydate = substr($ymddate, 0, 4);
+               $mdate = substr($ymddate, 5, 2);
+            if($mdate === '01'){
+              $mdate2 = 'Jan';
+            }
+            if($mdate === '02'){
+              $mdate2 = 'Feb';
+            }
+            if($mdate === '03'){
+              $mdate2 = 'Mar';
+            }
+            if($mdate === '04'){
+              $mdate2 = 'Apr';
+            }
+            if($mdate === '05'){
+              $mdate2 = 'May';
+            }
+            if($mdate === '06'){
+              $mdate2 = 'Jun';
+            }
+            if($mdate === '07'){
+              $mdate2 = 'Jul';
+            }
+            if($mdate === '08'){
+              $mdate2 = 'Aug';
+            }
+            if($mdate === '09'){
+              $mdate2 = 'Sep';
+            }
+            if($mdate === '10'){
+              $mdate2 = 'Oct';
+            }
+            if($mdate === '11'){
+              $mdate2 = 'Nov';
+            }
+            if($mdate === '12'){
+              $mdate2 = 'Dec';
+            }
+                $ddate = substr($ymddate, 8, 2);
+                $formatteddate = $mdate2 . "/" . $ddate . "/" . $ydate;
+          ?>
+          <tr>
+          <?php echo "<td> <a href='viewAppointment.php?id=" . $row['appt_id'] . "'>" . $formatteddate  . ' at ' . $row['time']; 
+          if($row['reoccuring_int'] != 'Never'){
+            echo " (Reoccurs " . $row['reoccuring_int'] . ")";
+          }
+          echo "</a> </td> <br>";
+          ?>
+          </script></center>
+           <?php
+              }
+          ?>
+	     	<li><h3><u>Client Life Events</u></h3></li>
+                  <?php
+            $results = pg_query("SELECT le.le_id, le.date, le.event_name FROM life_events as le, professionals as p WHERE p.prof_id = " . $_SESSION['prof_id'] . " AND le.cust_id = " . $identity . " ORDER BY le.date ASC");
+              if(pg_num_rows($results) == 0){ 
+                echo "This Client Has No Life Events";  
+              } 
+              while($row = pg_fetch_array($results)) {
+                $ymddate = $row["date"];
+                $ydate = substr($ymddate, 0, 4);
+                $mdate = substr($ymddate, 5, 2);
+            if($mdate === '01'){
+              $mdate2 = 'Jan';
+            }
+            if($mdate === '02'){
+              $mdate2 = 'Feb';
+            }
+            if($mdate === '03'){
+              $mdate2 = 'Mar';
+            }
+            if($mdate === '04'){
+              $mdate2 = 'Apr';
+            }
+            if($mdate === '05'){
+              $mdate2 = 'May';
+            }
+            if($mdate === '06'){
+              $mdate2 = 'Jun';
+            }
+            if($mdate === '07'){
+              $mdate2 = 'Jul';
+            }
+            if($mdate === '08'){
+              $mdate2 = 'Aug';
+            }
+            if($mdate === '09'){
+              $mdate2 = 'Sep';
+            }
+            if($mdate === '10'){
+              $mdate2 = 'Oct';
+            }
+            if($mdate === '11'){
+              $mdate2 = 'Nov';
+            }
+            if($mdate === '12'){
+              $mdate2 = 'Dec';
+            }
+                $ddate = substr($ymddate, 8, 2);
+                $formatteddate = $mdate2 . "/" . $ddate . "/" . $ydate;
+          ?>
+          <tr>
+          <?php echo "<td> <a href='viewLifeEvent.php?id=" . $row['le_id'] . "'>" . $row['event_name'] . ' on ' . $formatteddate . " </a> </td> <br>"?>
+          </script></center>
+           <?php
+              }
+          ?>
 	    </ul>
       </div>
    </div>
 </div>
 <br>
 <footer class="container-fluid text-center">
-    <p>True Course Life © 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc. True Course Ministries, 
-	True Course Living, Learning, Leading; and True Course Life & Leadership Development are all registered trademarks</p>
+    <p>True Course Life &copy; 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc. True Course Ministries, True Course Living, Learning, Leading; and True Course Life & Leadership Development are all registered trademarks. </p>
 </footer>
 </body>
 </html>

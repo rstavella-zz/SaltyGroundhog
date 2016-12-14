@@ -85,11 +85,12 @@ body {
        </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li><a href="home.php"><img src="true.jpg" class="img-rounded" alt="Home" width="70" height="30"> </a></li>
+        <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li><a href="clientPage.php">Clients</a></li>
         <li><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -111,15 +112,17 @@ body {
             <div class="login-form">
                <form action="" method="post">
                    <ul>
-		      <li>New Password: <input type="password" name="newPass" placeholder="New Password"></li><center>
+		       <li class="text-info">New Password: </li> 
+			<li><input type="password" id="newPass" name="newPass" placeholder="New Password"></li>
                       <div class="clear"></div>
                    </ul>
                    <ul>
-                      <li>Confirm Password: <input type="password" name="comPass" placeholder="Confirm Password"></li>
+			<li class="text-info">Confirm Password: </li>
+                      <li><input type="password" name="comPass" placeholder="Confirm Password"></li>
                       <div class="clear"></div>
                    </ul>
                    <ul>
-                      <td><input type="submit" name="submit" value="Submit" class="btn btn-primary"> </td>
+                      <td><input type="submit" name="submit" value="Submit"  onclick="CheckLength('newPass')" class="btn btn-primary"> </td>
                       <div class="clear"></div>
                    </ul>
                 </form>
@@ -135,19 +138,26 @@ body {
 </div> <!--wrapper -->
 
 <?php
+#As long as submit button is clicked the new password is entered into the database
 if(isset($_POST['submit'])){
         $conn_string = "host=10.10.7.159 port=5432 dbname=maindb user=postgres password=SaltyGroudhogs";
         $dbconn4 = pg_connect($conn_string);
         $prof_id = $_SESSION['prof_id'];
-        if(isset($_POST['newPass'])){ $newPass = password_hash($_POST['prof_password'], PASSWORD_DEFAULT); }
-	if(isset($_POST['comPass'])){ $comPass = $_POST['comPass']; }
-			
-        if($newEmail == $comEmail){
-        	$query = pg_query("UPDATE professionals SET prof_password = '$newPass' WHERE prof_id = ' $prof_id '");
-		$message = "Password Updated Successfully";
-                echo "<script type='text/javascript'>alert('$message');  document.location.href = 'settings.php';</script>";
-        } else{
-		$message = "Passwords Dont Match! Try Again!";
+        if(isset($_POST['newPass'])){ $newPass = $_POST['newPass']; }
+        if(isset($_POST['comPass'])){ $comPass = $_POST['comPass']; }
+
+	  if($newPass === $comPass) {
+  		if (!preg_match('/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,16}$/', $newPass)){
+      			$message = "Error. Password must be at least 8 characters, no more than 16 characters, and must include at least one upper case letter, one lower case letter, and one numeric digit.";
+                 	 	echo "<script type='text/javascript'>alert('$message');</script>";
+      } else {
+            $newPass = password_hash($newPass, PASSWORD_DEFAULT);
+          	$query = pg_query("UPDATE professionals SET prof_password = '$newPass' WHERE prof_id = '$prof_id'");
+  		      $message = "Password Updated Successfully";
+                  echo "<script type='text/javascript'>alert('$message');  document.location.href = 'settings.php';</script>";
+      } 
+    } else {
+  	$message = "Passwords Dont Match! Try Again!";
                 echo "<script type='text/javascript'>alert('$message');</script>";
         }
         pg_close();

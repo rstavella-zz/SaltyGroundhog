@@ -85,11 +85,12 @@ body {
        </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li><a href="home.php"><img src="true.jpg" class="img-rounded" alt="Home" width="70" height="30"> </a></li>
+        <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li class="active"><a href="clientPage.php">Clients</a></li>
         <li><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -111,15 +112,15 @@ body {
             <div class="login-form">
                <form action="" method="post">
 				 <ul>
-						 <li class="text-info">School Name </li>
-						 <li><input type="text" name="school_name" placeholder="School Name"></li>
+						 <li class="text-info">School Name *</li>
+						 <li><input type="text" name="school_name" placeholder="School Name" required></li>
 						 <div class="clear"></div>
 				 </ul>
 				 <ul>
-						 <li class="text-info">Graduation Year</li>
-						 <li class="se"><select class="form-dropdown" id="grad_year" name="grad_year">
+						 <li class="text-info">Graduation Year *</li>
+						 <li class="se"><select class="form-dropdown" id="grad_year" name="grad_year" required>
 								<option value="" selected="selected"></option>
-								<option value="1994">2017</option>
+								<option value="2017">2017</option>
 								<option value="2016">2016</option>
 								<option value="2015">2015</option>
 								<option value="2014">2014</option>
@@ -240,8 +241,8 @@ body {
 						 <div class="clear"></div>
 				 </ul>
                  <ul>
-						 <li class="text-info">Degree</li>
-						 <li class="se"><select class="form-dropdown" id="degree" name="degree">
+						 <li class="text-info">Degree *</li>
+						 <li class="se"><select class="form-dropdown" id="degree" name="degree" required>
 								<option value="" selected="selected"></option>
 								<option value="Primary School" >Primary School</option>
 								<option value="Highschool GED" >Highschool GED</option>
@@ -273,9 +274,16 @@ body {
          $conn_string = "host=10.10.7.159 port=5432 dbname=maindb user=postgres password=SaltyGroudhogs";
          $dbconn4 = pg_connect($conn_string);
          $identity = $_GET['id'];
+         $query0 = pg_query("SELECT cp.cust_id FROM customers as c, professionals as p, appointments as a, clientprofessional as cp WHERE p.prof_id = " . $_SESSION['prof_id'] . " AND cp.prof_id = " . $_SESSION['prof_id'] . " AND cp.cust_id= '$identity '");
+	     if(pg_num_rows($query0) == 0){ 
+	      load('home.php');  
+	     } 
          if(isset($_POST['school_name'])){ $school_name = $_POST['school_name']; }
          if(isset($_POST['degree'])){ $degree = $_POST['degree']; }
          if(isset($_POST['grad_year'])){ $grad_year = $_POST['grad_year']; }
+
+	#This strips input of any characters to stop attacks 
+	$school_name = preg_replace("/[^a-zA-Z0-9\s]/", "", $school_name);
 
          $query1 = "INSERT INTO education (education_id, cust_id, school_name, degree, grad_year) VALUES (nextval('education_education_id_seq'),'" . $identity . "',
                    '" . $school_name . "','" . $degree . "','" . $grad_year . "')";
@@ -287,7 +295,7 @@ body {
              echo "<script type='text/javascript'>alert('$message');</script>";
              exit();
         }else{
-             $message = "These values were inserted into the database";
+             $message = "Education Added Successfully!!";
              echo "<script type='text/javascript'>alert('$message'); document.location.href = 'customerFullBio.php?id=$identity'; </script>";
         }
        }

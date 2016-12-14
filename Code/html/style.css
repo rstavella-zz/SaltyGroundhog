@@ -1,9 +1,12 @@
-
 /*--
 Author: W3layouts
 Author URL: http://w3layouts.com
 License: Creative Commons Attribution 3.0 Unported
 License URL: http://creativecommons.org/licenses/by/3.0/
+
+Some code modifications by the Salty Groundhogs Team
+True Course Website
+Style sheet for the True Course Website
 --*/
 /* reset */
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,dl,dt,dd,ol,nav ul,nav li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline;}
@@ -36,7 +39,6 @@ img{max-width:100%;}
 
     /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
     .row.content {height: 450px}
-
 footer {
 
 background-color: #555;
@@ -129,6 +131,17 @@ body{
 	float: left;
 	background:#eee;
 }
+.login-form form input[type="password"],.login-form form textarea {
+    width: 61.7%;
+    padding: 6px;
+    font-size: 1em;
+    font-weight: 400;
+    border: 1px solid  #e6e6e6;
+    outline: none;
+    color: black;
+        float: left;
+        background:#eee;
+}
 .login-form p {
     font-size: 15px;
     margin: 10px 0;
@@ -154,6 +167,23 @@ body{
     margin: 0 0 0 3em;
 	float:right;
 }
+
+.login-form input[type="submit2"] {
+   font-size: 1em;
+    padding: .8em 1em;
+    text-transform: capitalize;
+    border: none;
+    outline: none;
+    background:#121838;
+    color: #fff;
+    cursor: pointer;
+    width: 35%;
+    font-family: 'Ubuntu', sans-serif;
+    margin: 0 0 0 0;
+    float:right;
+    transform: scale(.25, .25)
+}
+
 .forgot {
     font-size: .85em;
     color: #777;
@@ -380,6 +410,10 @@ li.dat {
    width: 94.5%;
        margin-right: 3%;
 }
+.login-form form input[type="password"], .login-form form textarea{
+   width: 94.5%;
+       margin-right: 3%;
+}
 .login-form form {
     margin-top: 1em;
 }
@@ -411,6 +445,9 @@ li.dat {
 .login-form form input[type="text"], .login-form form textarea {
     width: 93.5%;
 }
+.login-form form input[type="password"], .login-form form textarea {
+    width: 93.5%;
+}
 input#datepicker1, input#datepicker {
     width: 94%;
 }
@@ -424,4 +461,5 @@ li.selec {
 select#hour_15, select#min_15, select#ampm_15 {
     padding: 7.5px 18px;
 }
+
 }

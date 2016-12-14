@@ -1,3 +1,9 @@
+<!--
+This code was written by the Salty Groundhogs
+True Course Website
+This is the login validation page for the True Course login page (index.php)
+-->
+
 <?php 
 	error_reporting(-1); // display all faires
 	ini_set('display_errors', 1);  // ensure that faires will be seen

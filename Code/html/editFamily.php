@@ -58,11 +58,12 @@ else if( isset( $_SESSION['prof_id'])) : ?>
        </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li><a href="home.php"><img src="true.jpg" class="img-rounded" alt="Home" width="70" height="30"> </a></li>
+        <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li class="active"><a href="clientPage.php">Clients</a></li>
         <li><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -86,7 +87,7 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                          WHERE cu.Cust_ID = '$identity'");
 
 	  $results=pg_fetch_array($query);
-	  
+	 #Here we separate the birthdat of a client so that it can be updated if necessary 
 	  $birthDay = $results['dob'];                 
 	  $explodeBirthDay = explode('-',$birthDay);
 	  $dobMonth = $explodeBirthDay['0'];
@@ -97,6 +98,9 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 	<h1>Edit <?php echo $results['first_name'] . $results['last_name'] ?>'s Profile</h1>
 </div>
 <div class="main">
+<!-- Here we list all current information from the database and allow the professionals
+     To make any changes to the clients profile.
+-->
    <div class="main-section agile">
       <div class="login-form">
          <form method="post" action="editFamily.php?id=<?php echo $identity ?>">
@@ -114,10 +118,10 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 							<option value="<?php echo $results['relation']?> " selected="selected"><?php echo $results['relation']?></option>
 							<option value="Mother">Mother</option>
 							<option value="Father">Father</option>
+							<option value="Husband">Husband</option>
+							<option value="Wife">Wife</option>
 							<option value="Daughter">Daughter</option>
 							<option value="Son">Son</option>
-							<option value="Sister">Sister</option>
-							<option value="Brother">Brother</option>
 					 </select></li>
 					 <div class="clear"></div>
 			</ul>
@@ -199,7 +203,6 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 							<option value="India" >India</option>
 							<option value="Brazil" >Brazil</option>
 							<option value="Afghanistan" >Afghanistan</option>
-							<option value="Ãƒâ€¦land Islands" >Ãƒâ€¦land Islands</option>
 							<option value="Albania" >Albania</option>
 							<option value="Algeria" >Algeria</option>
 							<option value="American Samoa" >American Samoa</option>
@@ -395,35 +398,27 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 					 <div class="clear"></div>
 
 					 <li class="text-info">Zip Code </li>
-					 <li><input type="text" name="zipcode" value="<?php echo $results['zipcode'];?>"></li>
+					 <li><input type="text" name="zipcode" maxlength="5" value="<?php echo $results['zipcode'];?>"></li>
 					 <div class="clear"></div>
 
 			 </ul>
 			 <ul>
 					 <li class="text-info">Home Phone </li>
-					 <li><input type="text" name="home_phone" value="<?php echo $results['home_phone'];?>"></li>
+					 <li><input type="text" name="home_phone" maxlength="10" value="<?php echo $results['home_phone'];?>"></li>
 					 <div class="clear"></div>
 
 					 <li class="text-info">Cell Phone </li>
-					 <li><input type="text" name="cell_phone" value="<?php echo $results['cell_phone'];?>"></li>
+					 <li><input type="text" name="cell_phone" maxlength="10" value="<?php echo $results['cell_phone'];?>"></li>
 					 <div class="clear"></div>
 
 					 <li class="text-info">Work Phone </li>
-					 <li><input type="text" name="work_phone" value="<?php echo $results['work_phone'];?>"></li>
+					 <li><input type="text" name="work_phone" maxlength="10" value="<?php echo $results['work_phone'];?>"></li>
 					 <div class="clear"></div>
 			 </ul>
 			 <ul>
-					 <li class="text-info">Gender </li>
-					 <li class="se"><select class="form-dropdown" id="gender" name="gender">
-							<option value="<?php echo $results['gender'];?>" selected="selected"><?php echo $results['gender'];?></option>
-							<option value="Female" >Female</option>
-							<option value="Male" >Male</option>
-					  </select></li>
-					 <div class="clear"></div>
-			 </ul>
-			 <ul>
-					<li class="text-info">Month </li>
-					 <li class="se"> <select class="form-dropdown" id="dob_month" name="dob_month">
+					<li class="text-info">Birthday</li>
+					 <li class="se"> 
+						<select class="form-dropdown" id="dob_month" name="dob_month">
 							<option value="<?php echo $dobMonth;?>" selected="selected"><?php echo $dobMonth;?></option>
 							<option value="01">January</option>
 							<option value="02">Febuary</option>
@@ -437,10 +432,8 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 							<option value="10">October</option>
 							<option value="11">November</option>
 							<option value="12">December</option>
-					</select></li>
-					 <div class="clear"></div>
+					</select>
 
-					 <li class="text-info">Day </li> <li class="se">
 					 <select class="form-dropdown" id="dob_day" name="dob_day">
 							<option value="<?php echo $dobDay;?>" selected="selected"><?php echo $dobDay;?></option>
 							<option value="1">1</option>
@@ -474,10 +467,8 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 							<option value="29">29</option>
 							<option value="30">30</option>
 							<option value="31">31</option>
-					 </select></li>
-					 <div class="clear"></div>
+					 </select>
 
-					  <li class="text-info">Year </li> <li class="se">
 					 <select class="form-dropdown" id="dob_year" name="dob_year">
 							<option value="<?php echo $dobYear;?>" selected="selected"><?php echo $dobYear;?></option>
 							<option value="2016">2016</option>
@@ -564,7 +555,7 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 </div>
 <br>
 <footer class="container-fluid text-center">
-	<p>True Course Life � 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
+	<p>True Course Life &copy; 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
 		True Course Ministries, True Course Living, Learning, Leading; and True Course Life & Leadership Development are all registered trademarks. </p>
 </footer>
 
@@ -588,7 +579,19 @@ else if( isset( $_SESSION['prof_id'])) : ?>
 		$day = $_POST['dob_day'];
 		$year = $_POST['dob_year'];
 		$dob =  $month."-".$day."-".$year;
-						
+		
+		#This strips input of any characters to stop attacks
+	        $first_name = preg_replace("/[^a-zA-Z0-9\s]/", "", $first_name);
+	        $last_name = preg_replace("/[^a-zA-Z0-9\s]/", "", $last_name);
+	        $street_address = preg_replace("/[^a-zA-Z0-9\s]/", "", $street_address);
+	        $zipcode = preg_replace("/[^0-9\s]/", "", $zipcode);
+	        $city = preg_replace("/[^a-zA-Z0-9\s]/", "", $city);
+	        $home_phone = preg_replace("/[^0-9\s]/", "", $home_phone);
+ 	      	$work_phone = preg_replace("/[^0-9\s]/", "", $work_phone);
+	        $cell_phone = preg_replace("/[^0-9\s]/", "", $cell_phone);
+
+
+				
         $query1=pg_query("update customers set first_name='$first_name', last_name='$last_name', relation='$relation', street_address='$street_address', city='$city', state='$state', country='$country', home_phone='$home_phone', work_phone='$work_phone', cell_phone='$cell_phone',  gender='$gender', dob='$dob' where Cust_ID='$identity'");
                         
 	    if (!$query1 ) {
@@ -597,7 +600,7 @@ else if( isset( $_SESSION['prof_id'])) : ?>
              echo "<script type='text/javascript'>alert('$message');</script>";
              exit();
         }else{
-            $message = "These values were updated into the database";
+            $message = "Successfully Updated Family Member Profile";
             echo "<script type='text/javascript'>alert('$message'); document.location.href = 'familyMemeberFullBio.php?id=$identity';</script>";
         }
     } #end if submit

@@ -87,11 +87,12 @@ body {
        </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li><a href="home.php"><img src="true.jpg" class="img-rounded" alt="Home" width="70" height="30"> </a></li>
+        <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li><a href="clientPage.php">Clients</a></li>
         <li><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -103,6 +104,10 @@ body {
 </nav>
 
 <body>
+<!--
+Here we are outputting the email address, organization and allowing the professional
+to change email address or passord.
+-->
 	<div id="wrapper">
                 <div class="header">
                         <center><h1>Settings</h1></center>
@@ -117,12 +122,15 @@ body {
 						die(pg_error());
 					}
 					$identity = $_SESSION['prof_id'];
+					#Query using the session ID passed through the login to retrieve information
 					$results = pg_query("SELECT p.email, lm.organization FROM professionals as p, licenses as l, license_managers as lm WHERE prof_id = ' $identity ' AND p.license_key = l.license_key AND l.manager_id = lm.manager_id");
 					while($row = pg_fetch_array($results)) {
 				?>
 				<center>
-				<ul>
+				<ul><!--This shows the current email in the database based off the query results -->
 					<b>Email: </b><?php echo $row['email']?>
+          <br>
+          <br>
 					<input type="button" class="btn btn-primary" onclick="location.href='changeEmail.php';" value="Change Email" />
 				</ul>
 				<ul>

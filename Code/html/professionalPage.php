@@ -19,15 +19,12 @@ This page allows a professional to see all other professionals on the True Cours
 
 #Verifies that a professional is logged in.
 #This page is only viewable if you have the proper crednetials and are logged in. 
-   include('loginValidate.php'); 
-   session_start();
-   error_reporting(-1); // display all faires
-   ini_set('display_errors', 1);  // ensure that faires will be seen
-   ini_set('display_startup_errors', 1); // display faires that didn't born
-   if(!isset( $_SESSION['prof_id'])){
-     load('index.php');
-   }
-   else if( isset( $_SESSION['prof_id'])) : ?>
+include('loginValidate.php'); 
+session_start();
+if(!isset( $_SESSION['prof_id'])){
+  load('index.php');
+}
+else if( isset( $_SESSION['prof_id'])) : ?>
 
 <html lang="en">
 <head>
@@ -62,9 +59,10 @@ This page allows a professional to see all other professionals on the True Cours
       <ul class="nav navbar-nav">
         <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li><a href="clientPage.php">Clients</a></li>
-	<li class="active"><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
+        <li class="active"><a href="professionalPage.php">Professionals</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -77,6 +75,10 @@ This page allows a professional to see all other professionals on the True Cours
 
 
 <body>
+<!-- Here we are viewing all professionals within the True Course Website
+We are outputting their names and profile photos with each name linking
+them to a full professional bio
+-->
 	<div class="header w3ls">
 		<h1>Professionals</h1>
 	</div>
@@ -88,6 +90,7 @@ This page allows a professional to see all other professionals on the True Cours
             	   	   if(!$connect) {
                       	       die(pg_error());
             	   	    }
+			    #Get all other professionals within the database and order them by first name
             	   	    $results = pg_query("SELECT p.prof_id, p.prof_picture_url, p.first_name, p.last_name 
 						FROM professionals as p 
 						WHERE p.prof_id != " . $_SESSION['prof_id'] . " ORDER BY p.first_name ASC");
@@ -97,10 +100,11 @@ This page allows a professional to see all other professionals on the True Cours
                              	} else {
                                		$prof_picture_url = $row['prof_picture_url'];
                              	}
+				#Link to full professional bio
           			echo "<h2><a href=\"professionalFullBio.php?id={$row['prof_id']}\">{$row['first_name']} {$row['last_name']}</a></h2>";
             	        ?>
       		  	<ul>
-                          <li><img src="<?php echo $prof_picture_url?>" style="width:100px;height:100px;"></img></center></li><br>
+                          <li><a href="<?php echo "professionalFullBio.php?id=" . $row['prof_id']?>"><img src="<?php echo $prof_picture_url?>" style="width:100px;height:100px;"></img></a></center></li><br>
                         </ul>
 			<?php
             	   	    } #Closes While Loop

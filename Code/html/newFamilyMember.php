@@ -1,3 +1,4 @@
+
 <!--
 Credit to the Layout with the shaded Border
 Author: W3layouts
@@ -18,12 +19,20 @@ This page allows a professional to add a new Family Member
 #ini_set('display_startup_errors', 1); // display faires that didn't born
 
 #Verifies that a professional is logged in.
-#This page is only viewable if you have the proper crednetials and are logged in. 
+#This page is only viewable if you have the proper crednetials and are logged in.
 include('loginValidate.php');
 session_start();
 $identity = $_GET['id'];
+
 if(!isset( $_SESSION['prof_id'])){
   load('index.php');
+}
+
+$conn_string = "host=10.10.7.159 port=5432 dbname=maindb user=postgres password=SaltyGroudhogs";
+$dbconn4 = pg_connect($conn_string);
+$query0 = pg_query("SELECT cp.cust_id FROM customers as c, professionals as p, appointments as a, clientprofessional as cp WHERE p.prof_id = " . $_SESSION['prof_id'] . " AND cp.prof_id = " . $_SESSION['prof_id'] . " AND cp.cust_id= '$identity '");
+if(pg_num_rows($query0) == 0){ 
+  load('home.php'); 
 }
 
 else if( isset( $_SESSION['prof_id'])) : ?>
@@ -60,11 +69,12 @@ else if( isset( $_SESSION['prof_id'])) : ?>
        </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li><a href="home.php"><img src="true.jpg" class="img-rounded" alt="Home" width="70" height="30"> </a></li>
+        <li><a href="home.php"><img src="true.jpg" class="img-rounded"  width="70" height="30"></a></li>
         <li class="active"><a href="clientPage.php">Clients</a></li>
         <li><a href="professionalPage.php">Professionals</a></li>
-        <li><a href="\Calendar\sample.php">Calendar</a></li>
         <li><a href="newClientPage.php">Add Client</a></li>
+        <li><a href="addAppointment.php">Add Appointment</a></li>
+        <li><a href="addLifeEvent.php">Add Life Event</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="myProfile.php"><span class="glyphicon glyphicon-user"></span></a></li>
@@ -75,7 +85,7 @@ else if( isset( $_SESSION['prof_id'])) : ?>
   </div>
 </nav>
 
-	<body>
+        <body>
                 <div class="header w3ls">
                         <h1>Add Family Member</h1>
                 </div>
@@ -91,16 +101,16 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                  <li class="text-info">Last Name *</li>
                                                                  <li><input type="text" name="last_name" placeholder="Last Name" required></li>
                                                                  <div class="clear"></div>
-								
-								 <li class="text-info">Relation *</li>
+
+                                                                 <li class="text-info">Relation *</li>
                                                                  <li class="se"> <select class="form-dropdown" id="relation" name="relation" required>
                                                                         <option value="" selected="selected"></option>
                                                                         <option value="Mother">Mother</option>
                                                                         <option value="Father">Father</option>
+                                                                        <option value="Husband">Husband</option>
+                                                                        <option value="Wife">Wife</option>
                                                                         <option value="Daughter">Daughter</option>
                                                                         <option value="Son">Son</option>
-                                                                        <option value="Sister">Sister</option>
-                                                                        <option value="Brother">Brother</option>
                                                                  </select></li>
                                                                  <div class="clear"></div>
                                                          </ul>
@@ -182,7 +192,6 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                         <option value="India" >India</option>
                                                                         <option value="Brazil" >Brazil</option>
                                                                         <option value="Afghanistan" >Afghanistan</option>
-                                                                        <option value="Ãƒâ€¦land Islands" >Ãƒâ€¦land Islands</option>
                                                                         <option value="Albania" >Albania</option>
                                                                         <option value="Algeria" >Algeria</option>
                                                                         <option value="American Samoa" >American Samoa</option>
@@ -378,36 +387,28 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                  <div class="clear"></div>
 
                                                                  <li class="text-info">Zip Code *</li>
-                                                                 <li><input type="text" name="zipcode" placeholder="Zip Code" required></li>
+                                                                 <li><input type="text" name="zipcode" maxlength="5" placeholder="Zip Code" required></li>
                                                                  <div class="clear"></div>
 
                                                          </ul>
                                                          <ul>
                                                                  <li class="text-info">Home Phone *</li>
-                                                                 <li><input type="text" name="home_phone" placeholder="Home Phone" required></li>
+                                                                 <li><input type="text" name="home_phone" maxlength="10" placeholder="Home Phone EX: 1234567890" required></li>
                                                                  <div class="clear"></div>
 
                                                                  <li class="text-info">Cell Phone *</li>
-                                                                 <li><input type="text" name="cell_phone" placeholder="Cell Phone" required></li>
+                                                                 <li><input type="text" name="cell_phone" maxlength="10" placeholder="Cell Phone EX: 1234567890" required></li>
                                                                  <div class="clear"></div>
 
                                                                  <li class="text-info">Work Phone *</li>
-                                                                 <li><input type="text" name="work_phone" placeholder="Work Phone" required></li>
+                                                                 <li><input type="text" name="work_phone" maxlength="10" placeholder="Work Phone EX: 1234567890" required></li>
                                                                  <div class="clear"></div>
                                                          </ul>
-                                                         <ul>
-                                                                 <li class="text-info">Gender *</li>
-                                                                 <li class="se"><select class="form-dropdown" id="gender" name="gender" required>
-                                                                        <option value="" selected="selected"></option>
-									<option value="Female" >Female</option>
-									<option value="Male" >Male</option>
-                                                                  </select></li>
-                                                                 <div class="clear"></div>
-                                                         </ul>
-                                                         <ul>
-                                                                 <li class="text-info">Month *</li>
-                                                                 <li class="se"> <select class="form-dropdown" id="dob_month" name="dob_month" required>
-                                                                        <option value="" selected="selected"></option>
+                                                        <ul>
+                                                         <li class="text-info">Birthday *</li>
+                                                            <li class="se">
+                                                                <select class="form-dropdown" id="dob_month" name="dob_month" required>
+                                                                        <option value="">Month</option>
                                                                         <option value="01">January</option>
                                                                         <option value="02">Febuary</option>
                                                                         <option value="03">March</option>
@@ -420,12 +421,9 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                         <option value="10">October</option>
                                                                         <option value="11">November</option>
                                                                         <option value="12">December</option>
-								 </select></li>
-                                                                 <div class="clear"></div>
-
-                                                                 <li class="text-info">Day *</li> <li class="se">
+                                                                 </select>
                                                                  <select class="form-dropdown" id="dob_day" name="dob_day" required>
-                                                                        <option value="" selected="selected"></option>
+                                                                        <option value="">Day</option>
                                                                         <option value="1">1</option>
                                                                         <option value="2">2</option>
                                                                         <option value="3">3</option>
@@ -457,12 +455,9 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                         <option value="29">29</option>
                                                                         <option value="30">30</option>
                                                                         <option value="31">31</option>
-                                                                 </select></li>
-                                                                 <div class="clear"></div>
-
-                                                                  <li class="text-info">Year *</li> <li class="se">
+                                                                 </select>
                                                                  <select class="form-dropdown" id="dob_year" name="dob_year" required>
-                                                                        <option value="" selected="selected"></option>
+                                                                        <option value="">Year</option>
                                                                         <option value="2016">2016</option>
                                                                         <option value="2015">2015</option>
                                                                         <option value="2014">2014</option>
@@ -535,28 +530,25 @@ else if( isset( $_SESSION['prof_id'])) : ?>
                                                                         <option value="1947">1947</option>
                                                                   </select></li>
                                                                  <div class="clear"></div>
-
                                                          </ul>
-							<ul>
-                                                        	<li><input type="submit" class="btn btn-primary" name="submit" value="Submit"></li>
-								<div class="clear"></div>
-							</ul>
+
+                                                        <ul>
+                                                                <li><input type="submit" class="btn btn-primary" name="submit" value="Submit"></li>
+                                                                <div class="clear"></div>
+                                                        </ul>
                                                 </form>
                                         </div>
                                 </div>
                         </div>
 <br>
 <footer class="container-fluid text-center">
-    <p>True Course Life � 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
+    <p>True Course Life &copy; 2016. True Course Life and Leadership Development includes True Course Living, Learning, Leading, LLC and True Course Ministries, Inc.
        True Course Ministries, True Course Living, Learning, Leading; and True Course Life & Leadership Development are all registered trademarks. </p>
 </footer>
 
 <?php
      if(isset($_POST['submit'])){
-
-        $conn_string = "host=10.10.7.159 port=5432 dbname=maindb user=postgres password=SaltyGroudhogs";
-        $dbconn4 = pg_connect($conn_string);
-
+		
         $prof_id = $_SESSION['prof_id'];
         $active_status = "Active";
 
@@ -577,23 +569,34 @@ else if( isset( $_SESSION['prof_id'])) : ?>
         if(isset($_POST['city'])){ $city = $_POST['city']; }
         if(isset($_POST['country'])){ $country = $_POST['country']; }
         if(isset($_POST['home_phone'])){ $home_phone = $_POST['home_phone']; }
-	if(isset($_POST['work_phone'])){ $work_phone = $_POST['work_phone']; } 
-        if(isset($_POST['cell_phone'])){ $cell_phone = $_POST['cell_phone']; } 
+        if(isset($_POST['work_phone'])){ $work_phone = $_POST['work_phone']; }
+        if(isset($_POST['cell_phone'])){ $cell_phone = $_POST['cell_phone']; }
         if(isset($_POST['email'])){ $email = $_POST['email']; }
-        if(isset($_POST['gender'])){ $gender = $_POST['gender']; }
-	if(isset($_POST['relation'])){ $relation = $_POST['relation']; }
+        if(isset($_POST['relation'])){ $relation = $_POST['relation']; }
 
-	$custpic_url = "null";
-	$martital_status = "null";
-	$pref_call_time = "null";
-	$self_awareness_practice = "null";
-	$email = "null";
-       	$query = "INSERT INTO customers VALUES (nextval('customers_cust_id_seq'), '" . $identity . "','" . $relation ."', '" . $first_name . "','" . $last_name . "',
+        #This strips input of any characters to stop attacks
+        $first_name = preg_replace("/[^a-zA-Z0-9\s]/", "", $first_name);
+        $last_name = preg_replace("/[^a-zA-Z0-9\s]/", "", $last_name);
+        $street_address = preg_replace("/[^a-zA-Z0-9\s]/", "", $street_address);
+        $zipcode = preg_replace("/[^0-9\s]/","", $zipcode);
+        $city = preg_replace("/[^a-zA-Z0-9\s]/", "", $city);
+        $home_phone = preg_replace("/[^0-9\s]/", "",  $home_phone);
+        $work_phone = preg_replace("/[^0-9\s]/", "", $work_phone);
+        $cell_phone = preg_replace("/[^0-9\s]/", "", $cell_phone);
+
+        $custpic_url = "null";
+        $martital_status = "null";
+        $pref_call_time = "null";
+        $self_awareness_practice = "null";
+        $email = "null";
+        $gender = "null";
+
+        $query = "INSERT INTO customers VALUES (nextval('customers_cust_id_seq'), '" . $identity . "','" . $relation ."', '" . $first_name . "','" . $last_name . "',
                         '" . $active_status . "', '" . $street_address . "','" . $zipcode . "', '" . $state . "', '" . $city . "', '" . $country . "', '" . $home_phone . "',
                         '" . $work_phone . "', '" .$cell_phone . "', '" . $gender . "', '" . $martital_status . "', '" . $email . "','" . $dob . "', '" . $custpic_url . "')";
-	
 
-       	$result = pg_query($dbconn4, $query);
+
+        $result = pg_query($dbconn4, $query);
 
 
         if (!$result) {
@@ -602,7 +605,7 @@ else if( isset( $_SESSION['prof_id'])) : ?>
              echo "<script type='text/javascript'>alert('$message');</script>";
             exit();
         }else{
-            $message = "These values were inserted into the database";
+            $message = "Family Member Successfully Added!";
             echo "<script type='text/javascript'>alert('$message'); document.location.href = 'customerProfilePage.php?id=$identity';</script>";
         }
      }
